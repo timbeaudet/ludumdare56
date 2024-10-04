@@ -52,10 +52,7 @@
 //      we no longer use Object Definitions. Those are Legacy track builder things and Node/Components are the future.
 //   2. Create a Trigger of sorts, although we might be able to reuse the built-in BoxCollider component and even
 //      Track Bundler might have a helper function to get this into world/physics already, who know about tying events.
-//   3. Need to mode/adjust the code that looks for a "Simple Road" SplineDefinition and instead look for the Spline Path
-//      on a node named "racetrack" or "racetrack_path" or something similar and use that path to generate the AI track.
-
-//   2. Any additional fallout from the removal of almost all assets in Trophy Brawlers to create the LD empty project.
+//   3. Any additional fallout from the removal of almost all assets in Trophy Brawlers to create the LD empty project.
 
 //--------------------------------------------------------------------------------------------------------------------//
 
