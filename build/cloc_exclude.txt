@@ -1,0 +1,4 @@
+../.git
+../external_libraries
+../build/tb_external_libraries
+../source/dependencies/imgui

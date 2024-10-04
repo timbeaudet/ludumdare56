@@ -1,0 +1,46 @@
+{
+	"version":2,
+	"root_path":"data/audio/",
+	"audio_events": [
+		{
+			"name": "music",
+			"source": "silence.wav",
+			"looping": true,
+			"music":true,
+			"volume": 0.5,
+			"pitch":1.0
+		},
+
+		{
+			"name":"example_event",
+			"source":"silence.wav"
+		},
+		{
+			"name":"example_looping_event",
+			"source":"silence.wav",
+			"looping":true
+		},
+		{
+			"name":"example_setting_event",
+			"source":"silence.wav",
+			"volume":1.0,
+			"pitch":1.0
+		},
+		{
+			"name":"example_random_event",
+			"source":"silence.wav",
+			"min_volume":0.8,
+			"max_volume":1.0,
+			"min_pitch":0.8,
+			"max_pitch":1.2
+		},
+		{
+			"name":"example_multi_event",
+			"source": [
+				{ "file":"silence.wav", "volume":0.7 },
+				{ "file":"silence.wav" },
+				{ "file":"silence.wav" }
+			]
+		}
+	]
+}

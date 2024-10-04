@@ -1,0 +1,9 @@
+{
+	"version":1,
+	"components":{
+		"grand_stand":{
+			"display_name": "Grand Stand",
+			"id":"f541890d-8f33-4926-bc20-5a4e615e23b7"
+		}
+	}
+}

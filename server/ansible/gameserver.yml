@@ -1,0 +1,40 @@
+---
+- hosts: all
+  gather_facts: no
+
+  vars:
+    - username: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Install needed software
+      apt:
+        update_cache: yes
+        name: [ screen ]
+        state: present
+
+    - name: Create user {{ username }}
+      user:
+        name: "{{ username }}"
+        state: present
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+      register: user_created
+
+    - name: Delete {{ username }}'s password
+      shell: passwd -d {{ username }}
+      when: user_created.changed
+
+    - name: Install SSH key for {{ username }}
+      authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+    - name: Create the game and run directory
+      ansible.builtin.file:
+        path: "/home/{{username}}/ludumdare56/run"
+        state: directory
+        owner: "{{username}}"
+        group: "{{username}}"
+        mode: '0755'

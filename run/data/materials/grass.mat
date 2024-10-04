@@ -1,0 +1,9 @@
+{
+	"albedo_map": "data/textures/open_art_grass.png",
+	"roughness_map": "",
+	"a_normal_map": "data/textures/pixar_lawn_grass_128_normal.png",
+	"tint_color": "0xFFFFFFFF",
+	"roughness": 0.0,
+	"metalness": 0.0,
+	"normal_strength":  1.01
+}

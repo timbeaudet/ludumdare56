@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key><string>Trophy Brawlers</string>
+	<key>CFBundleIconFile</key><string>ludumdare56.icns</string>
+	<key>CFBundleExecutable</key><string>LudumDare56</string>
+
+	<key>CFBundleGetInfoString</key><string></string>
+	<key>CFBundleIdentifier</key><string>com.trophybrawlers.www</string>
+	<key>CFBundleShortVersionString</key><string>0.0.1</string>
+	<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+	<key>CFBundlePackageType</key><string>APPL</string>
+	<key>IFMajorVersion</key><integer>0</integer>
+	<key>IFMinorVersion</key><integer>1</integer>
+</dict>
+</plist>

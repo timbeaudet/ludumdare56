@@ -1,0 +1,8 @@
+{
+	"albedo_map": "",
+	"tint_color": "0x80fd625e",
+	"roughness": 0.5,
+	"metalness": 0.0,
+	"normal_strength":  1.0,
+	"transparent": true
+}

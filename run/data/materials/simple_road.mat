@@ -1,0 +1,9 @@
+{
+	"albedo_map": "data/textures/concrete_albedo.png",
+	"roughness_map": "data/textures/concrete_roughness.png",
+	"normal_map": "",
+	"tint_color": "0xFFFFFFFF",
+	"roughness": 1.0,
+	"metalness": 0.0,
+	"normal_strength":  1.0
+}

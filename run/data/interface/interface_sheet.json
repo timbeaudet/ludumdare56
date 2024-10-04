@@ -1,0 +1,75 @@
+{
+	"version":2,
+	"texture":"data/interface/interface_sheet.png",
+	"sprites":[
+		{	"name":"main_button_normal", "x":1, "y":1, "width":478, "height":88 },
+		{	"name":"main_button_active", "x":1, "y":91, "width":478, "height":88 },
+		{	"name":"main_button_disabled", "x":1, "y":181, "width":478, "height":88 },
+
+		{	"name":"button_normal", "x":1141, "y":1, "width":478, "height":88 },
+		{	"name":"button_active", "x":1141, "y":91, "width":478, "height":88 },
+		{	"name":"button_disabled", "x":1141, "y":181, "width":478, "height":88 },
+
+		{	"name":"checkbox_normal", "x":481, "y":1, "width":88, "height":88 },
+		{	"name":"checkbox_active", "x":481, "y":91, "width":88, "height":88 },
+		{	"name":"checkbox_disabled", "x":481, "y":181, "width":88, "height":88 },
+		{	"name":"checkmark_normal", "x":481, "y":271, "width":88, "height":88 },
+		{	"name":"checkmark_active", "x":481, "y":361, "width":88, "height":88 },
+		{	"name":"checkmark_disabled", "x":481, "y":451, "width":88, "height":88 },
+
+		{	"name":"dropdown_normal", "x":571, "y":1, "width":478, "height":88 },
+		{	"name":"dropdown_active", "x":571, "y":271, "width":478, "height":88 },
+		{	"name":"dropdown_focused", "x":571, "y":91, "width":478, "height":88 },
+		{	"name":"dropdown_disabled", "x":571, "y":181, "width":478, "height":88 },
+		{	"name":"dropdown_item", "x":571, "y":361, "width":478, "height":88 },
+		{	"name":"dropdown_final_item", "x":571, "y":451, "width":478, "height":88 },
+		{	"name":"dropdown_selected_item", "x":571, "y":541, "width":478, "height":88 },
+
+		{	"name":"slider_normal", "x":1, "y":271, "width":478, "height":88 },
+		{	"name":"slider_active", "x":1, "y":361, "width":478, "height":88 },
+		{	"name":"slider_disabled", "x":1, "y":451, "width":478, "height":88 },
+		{	"name":"slider_handle_normal", "x":1051, "y":271, "width":88, "height":88 },
+		{	"name":"slider_handle_active", "x":1051, "y":361, "width":88, "height":88 },
+		{	"name":"slider_handle_disabled", "x":1051, "y":451, "width":88, "height":88 },
+
+		{	"name":"textbox_normal", "x":1, "y":541, "width":478, "height":88 },
+		{	"name":"textbox_focused", "x":1, "y":631, "width":478, "height":88 },
+		{	"name":"textbox_active", "x":1, "y":721, "width":478, "height":88 },
+		{	"name":"textbox_disabled", "x":1, "y":811, "width":478, "height":88 },
+
+		{	"name":"tab_normal_closed", "x":571, "y":631, "width":478, "height":88 },
+		{	"name":"tab_normal_opened", "x":571, "y":721, "width":478, "height":88 },
+		{	"name":"tab_focused", "x":571, "y":811, "width":478, "height":88 },
+		{	"name":"tab_disabled", "x":571, "y":901, "width":478, "height":88 },
+
+		{	"name":"anine0", "x":481, "y":541, "width":13, "height":13 },
+		{	"name":"anine1", "x":494, "y":541, "width":62, "height":13 },
+		{	"name":"anine2", "x":556, "y":541, "width":13, "height":13 },
+		{	"name":"anine3", "x":481, "y":554, "width":13, "height":62 },
+		{	"name":"anine4", "x":494, "y":554, "width":62, "height":62 },
+		{	"name":"anine5", "x":556, "y":554, "width":13, "height":62 },
+		{	"name":"anine6", "x":481, "y":616, "width":13, "height":13 },
+		{	"name":"anine7", "x":494, "y":616, "width":62, "height":13 },
+		{	"name":"anine8", "x":556, "y":616, "width":13, "height":13 },
+
+		{	"name":"round_nine0", "x":481, "y":541, "width":13, "height":13 },
+		{	"name":"round_nine1", "x":494, "y":541, "width":16, "height":13 },
+		{	"name":"round_nine2", "x":556, "y":541, "width":13, "height":13 },
+		{	"name":"round_nine3", "x":481, "y":554, "width":13, "height":16 },
+		{	"name":"round_nine4", "x":494, "y":554, "width":16, "height":16 },
+		{	"name":"round_nine5", "x":556, "y":554, "width":13, "height":16 },
+		{	"name":"round_nine6", "x":481, "y":616, "width":13, "height":13 },
+		{	"name":"round_nine7", "x":494, "y":616, "width":16, "height":13 },
+		{	"name":"round_nine8", "x":556, "y":616, "width":13, "height":13 },
+
+		{	"name":"nine0", "x":481, "y":631, "width":13, "height":13 },
+		{	"name":"nine1", "x":494, "y":631, "width":16, "height":13 },
+		{	"name":"nine2", "x":556, "y":631, "width":13, "height":13 },
+		{	"name":"nine3", "x":481, "y":644, "width":13, "height":16 },
+		{	"name":"nine4", "x":494, "y":644, "width":16, "height":16 },
+		{	"name":"nine5", "x":556, "y":644, "width":13, "height":16 },
+		{	"name":"nine6", "x":481, "y":706, "width":13, "height":13 },
+		{	"name":"nine7", "x":494, "y":706, "width":16, "height":13 },
+		{	"name":"nine8", "x":556, "y":706, "width":13, "height":13 }
+	]
+}
