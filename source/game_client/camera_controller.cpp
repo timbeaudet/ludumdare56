@@ -20,7 +20,9 @@ namespace
 {
 	struct CameraModifiers
 	{
-		tbMath::Vector3 offsetFromCar = tbMath::Vector3(0.0f, 1.286f, 3.571f);//CarSpace
+		tbMath::Vector3 offsetFromCar = tbMath::Vector3(0.0f, 8.286f, 5.571f);//CarSpace
+
+		//tbMath::Vector3 offsetFromCar = tbMath::Vector3(0.0f, 1.286f, 3.571f);//CarSpace
 		tbMath::Vector3 lookAtOffset = tbMath::Vector3(0.0f, 0.357f, 0.0f);//WorldSpace
 		float springEffect = 0.070f;
 		float staticCameraDistance = 20.404f;
@@ -322,6 +324,24 @@ void LudumDare56::GameClient::CameraController::SimulateCockpitCamera(void)
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
+
+//void LudumDare56::GameClient::CameraController::SimulateChaseCamera(void)
+//{
+//	const tbMath::Matrix4 targetToWorld = GetViewedTargetToWorld();
+//	const tbMath::Vector3 targetLinearVelocity = GetViewedTargetVelocity();
+//	const float speedMPH = tbMath::Convert::MeterSecondToMileHour(tbMath::Vector2(targetLinearVelocity.x, targetLinearVelocity.z).Magnitude());
+//	const float speedPercentage = tbMath::Clamp(speedMPH / 80.0f, 0.0f, 1.0f);
+//
+//	const tbMath::Vector3 flattenedForward(tbMath::Vector3(-targetToWorld.GetBasis(2).x, 0.0f, -targetToWorld.GetBasis(2).z).GetNormalized());
+//	const tbMath::Vector3 flattenedVelocity(tbMath::Vector3(targetLinearVelocity.x, 0.0f, targetLinearVelocity.z).GetNormalized());
+//	const tbMath::Vector3 flattenedDirection((speedMPH < 2.0f) ? flattenedForward : flattenedVelocity);
+//	const tbMath::Vector3 targetPosition = targetToWorld.GetPosition() - flattenedDirection * theCameraSettings.offsetFromCar.z;
+//	const tbMath::Vector3 worldBehindAboveKart = targetPosition + tbMath::Vector3(0.0f, theCameraSettings.offsetFromCar.y, 0.0f);
+//
+//	const tbMath::Vector3 cameraPosition = ((worldBehindAboveKart - mChaseCamera.GetPosition()) * theCameraSettings.springEffect) + mChaseCamera.GetPosition();
+//	mChaseCamera.LookAt(targetToWorld.GetPosition() + theCameraSettings.lookAtOffset, cameraPosition);
+//	mChaseCamera.SetFieldOfView(90.0_degrees * (1.0f + 0.2222f * tbMath::Interpolation::SmoothStep(speedPercentage)));
+//}
 
 void LudumDare56::GameClient::CameraController::SimulateChaseCamera(void)
 {

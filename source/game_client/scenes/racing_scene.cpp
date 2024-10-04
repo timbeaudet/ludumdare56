@@ -303,16 +303,17 @@ void LudumDare56::GameClient::RacingScene::OnOpen(void)
 		GameState::RacecarState::GetMutable(thePlayerRacecarIndex).SetVehicleToWorld(gridToWorld);
 		UpdateControllerBindings();
 
-		for (tbCore::byte index = 1; index < GameState::kNumberOfRacecars && index < GameState::kNumberOfDrivers; ++index)
-		{
-			const icePhysics::Matrix4 botGridToWorld = GameState::RacetrackState::GetGridToWorld(static_cast<GameState::GridIndex>(index));
-			const GameState::DriverLicense botLicense = GameState::DriverLicense("singleplayer", "Bot " + tb_string(static_cast<int>(index)));
-			const GameState::DriverIndex botDriver = GameState::RaceSessionState::DriverEnterCompetition(botLicense);
-			const GameState::RacecarIndex botRacecar = GameState::RaceSessionState::DriverEnterRacecar(botDriver);
-			GameState::RacecarState::GetMutable(botRacecar).SetVehicleToWorld(botGridToWorld);
-			GameState::RacecarState::GetMutable(botRacecar).SetRacecarMeshID(1);
-			GameState::RacecarState::GetMutable(botRacecar).SetRacecarController(new GameState::ArtificialDriverController(botDriver, botRacecar));
-		}
+		// LD don't need the AI, least right now.
+		//for (tbCore::byte index = 1; index < GameState::kNumberOfRacecars && index < GameState::kNumberOfDrivers; ++index)
+		//{
+		//	const icePhysics::Matrix4 botGridToWorld = GameState::RacetrackState::GetGridToWorld(static_cast<GameState::GridIndex>(index));
+		//	const GameState::DriverLicense botLicense = GameState::DriverLicense("singleplayer", "Bot " + tb_string(static_cast<int>(index)));
+		//	const GameState::DriverIndex botDriver = GameState::RaceSessionState::DriverEnterCompetition(botLicense);
+		//	const GameState::RacecarIndex botRacecar = GameState::RaceSessionState::DriverEnterRacecar(botDriver);
+		//	GameState::RacecarState::GetMutable(botRacecar).SetVehicleToWorld(botGridToWorld);
+		//	GameState::RacecarState::GetMutable(botRacecar).SetRacecarMeshID(1);
+		//	GameState::RacecarState::GetMutable(botRacecar).SetRacecarController(new GameState::ArtificialDriverController(botDriver, botRacecar));
+		//}
 		break; }
 
 	default: {
