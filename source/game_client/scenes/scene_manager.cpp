@@ -10,6 +10,7 @@
 #include "../../game_client/scenes/scene_manager.hpp"
 #include "../../game_client/scenes/title_scene.hpp"
 #include "../../game_client/scenes/racing_scene.hpp"
+#include "../../game_client/scenes/next_level_scene.hpp"
 
 LudumDare56::GameClient::SceneManager* LudumDare56::GameClient::theSceneManager(nullptr);
 
@@ -21,6 +22,7 @@ LudumDare56::GameClient::SceneManager::SceneManager(void) :
 	mScenes.resize(kSceneCount, nullptr);
 	mScenes[SceneId::kTitleScene] = new TitleScene();
 	mScenes[SceneId::kRacingScene] = new RacingScene();
+	mScenes[SceneId::kNextLevelScene] = new NextLevelScene();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

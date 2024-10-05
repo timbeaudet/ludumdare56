@@ -8,6 +8,7 @@
 #ifndef LudumDare56_RaceSessionState_hpp
 #define LudumDare56_RaceSessionState_hpp
 
+#include "../ludumdare56.hpp"
 #include "../core/event_system.hpp"
 #include "../game_state/driver_license.hpp"
 
@@ -88,6 +89,9 @@ namespace LudumDare56
 			RacecarIndex GetRacecarIndexOnGrid(const GridIndex gridIndex);
 
 			void SetStartingGrid(const std::array<GridIndex, kNumberOfRacecars>& startingGrid);
+
+			void SetNextLevel(const String& trackFilepath);
+			void AdvanceToNextLevel(void);
 
 			///
 			/// @details While this will give you a randomized grid, it will ensure all active racecars are at the front

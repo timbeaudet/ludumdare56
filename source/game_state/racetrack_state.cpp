@@ -544,6 +544,8 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 			tb_error_if(nullptr == trackInfo, "Error: Expected 'racetrack' node to have a Track Information component.");
 			const tbCore::DynamicStructure& trackProperties = (nullptr == trackInfo) ? tbCore::DynamicStructure::kNullValue : trackInfo->mProperties;
 
+			RaceSessionState::SetNextLevel(trackProperties.GetMember("next_track").AsStringWithDefault(""));
+
 			iceGraphics::Visualization unusedDebug;
 			const TrackBundler::Component* splineMeshComponent = GetComponentOn(node.mNodeKey, trackBundle.mImprovedBundle,
 				TrackBundler::ComponentDefinition::kSplineMeshKey);

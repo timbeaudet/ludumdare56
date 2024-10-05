@@ -21,11 +21,9 @@ namespace LudumDare56
 
 		enum SceneId
 		{
-			kAuthenticationScene,
-			kRacecarSelectionScene,
 			kTitleScene,
 			kRacingScene,
-			kOnlineConnectionScene,
+			kNextLevelScene,
 			kSceneCount,
 		};
 

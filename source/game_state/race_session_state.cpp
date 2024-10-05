@@ -32,6 +32,8 @@ namespace
 	tbGame::GameTimer theWorldTimer = 0;
 	bool theTrustedMode = true;
 
+	tbCore::tbString theNextRacetrackName = "";
+
 	class RacetrackLoader : public TrackBundler::BundleProcessorInterface
 	{
 	private:
@@ -47,7 +49,13 @@ namespace
 };
 
 //Accessed by GameServer launch parameters.
-tbCore::tbString theDefaultRacetrackName = "default";
+const tbCore::tbString theOriginalDefaultRacetrackName = "default";
+tbCore::tbString theDefaultRacetrackName = theOriginalDefaultRacetrackName;
+
+tbCore::tbString RacetrackNameToFilepath(const tbCore::tbString& racetrackName)
+{
+	return "data/racetracks/" + racetrackName + ".trk";
+}
 
 //--------------------------------------------------------------------------------------------------------------------//
 
@@ -123,7 +131,7 @@ void LudumDare56::GameState::RaceSessionState::Create(const bool isTrusted, cons
 	}
 	else
 	{
-		RacetrackState::LoadRacetrack("data/racetracks/" + theDefaultRacetrackName + ".trk");
+		RacetrackState::LoadRacetrack(RacetrackNameToFilepath(theDefaultRacetrackName));
 	}
 
 	thePhysicalWorld.reset(new icePhysics::PhysicalWorld());
@@ -410,6 +418,27 @@ void LudumDare56::GameState::RaceSessionState::SetStartingGrid(const std::array<
 	tb_debug_log("");
 
 	theRaceSessionBroadcaster.SendEvent(TyreBytes::Core::Event(Events::RaceSession::StartGridChanged));
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void LudumDare56::GameState::RaceSessionState::SetNextLevel(const String& trackName)
+{
+	theNextRacetrackName = trackName;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void LudumDare56::GameState::RaceSessionState::AdvanceToNextLevel(void)
+{
+	//const String racetrackName = (true == theNextRacetrackName.empty()) ? theDefaultRacetrackName : theNextRacetrackName;
+	//const String racetrackFilepath = RacetrackNameToFilepath(racetrackName);
+
+	////What all we need to do to reload to a new track? That is new!
+	//Destroy();
+	//Create(true, racetrackFilepath);
+
+	theDefaultRacetrackName = (true == theNextRacetrackName.empty()) ? theOriginalDefaultRacetrackName : theNextRacetrackName;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

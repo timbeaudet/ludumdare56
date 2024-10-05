@@ -10,6 +10,7 @@
 #include "../../game_client/entities_2d/mouse_hiding_entity.hpp"
 #include "../../game_client/entities_2d/lap_time_popup_entity.hpp"
 #include "../../game_client/entities_2d/start_procedure_lights_entity.hpp"
+#include "../../game_client/graphics_2d/win_lose_screen_graphic.hpp"
 #include "../../game_client/graphics_2d/racecar_name_tag.hpp"
 #include "../../game_client/player_racecar_controller.hpp"
 #include "../../game_state/race_session_state.hpp"
@@ -275,6 +276,8 @@ void LudumDare56::GameClient::RacingScene::OnOrthographicRender(void) const
 
 void LudumDare56::GameClient::RacingScene::OnOpen(void)
 {
+	tb_debug_log(LogClient::Info() << "Opening RacingScene.");
+
 	Base3dScene::OnOpen();
 	UpdateUserSettings();
 
@@ -329,12 +332,18 @@ void LudumDare56::GameClient::RacingScene::OnOpen(void)
 		AddGraphic(new RacecarNameTag(racecar.GetRacecarIndex()));
 		racecar.AddEventListener(*this);
 	}
+
+	//This is down here because we set thePlayerRacecarIndex in the middle...
+	AddGraphic(new WinLoseScreenGraphic(thePlayerRacecarIndex));
+
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
 void LudumDare56::GameClient::RacingScene::OnClose(void)
 {
+	tb_debug_log(LogClient::Info() << "Closing RacingScene.");
+
 	for (GameState::RacecarState& racecar : GameState::RacecarState::AllMutableRacecars())
 	{
 		racecar.RemoveEventListener(*this);
