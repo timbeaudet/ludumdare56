@@ -434,8 +434,15 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 	for (Creature& creature : mCreatures)
 	{
 		creature.mPreviousPosition = creature.mCreatureToWorld.GetPosition();
-		if (false == creature.mIsAlive || false == creature.mIsRacing)
+		if (false == creature.mIsAlive)
 		{
+			++creatureIndex;
+			continue;
+		}
+
+		if (false == creature.mIsRacing)
+		{
+			++mSwarmHealth;
 			++creatureIndex;
 			continue;
 		}

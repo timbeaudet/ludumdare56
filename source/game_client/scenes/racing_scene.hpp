@@ -12,6 +12,7 @@
 #include "../../game_client/graphics_3d/racetrack_graphic.hpp"
 #include "../../game_client/graphics_3d/racecar_graphic.hpp"
 #include "../../game_client/graphics_2d/racecar_speedometer.hpp"
+#include "../../game_client/graphics_2d/swarm_health_bar.hpp"
 #include "../../game_client/graphics_2d/racecar_tachometer.hpp"
 #include "../../game_client/entities_2d/settings_screen_entity.hpp"
 #include "../../game_client/entities_2d/player_standings_entity.hpp"
@@ -98,7 +99,7 @@ namespace LudumDare56
 			RacecarArray mRacecarArray;
 
 			RacecarTachometer mRacecarTachometer;
-			RacecarSpeedometer mRacecarSpeedometer;
+			SwarmHealthBar mSwarmHealthBar;
 			PlayerStandingsEntity mRacecarStandings;
 
 			//The following things are only valid in Multiplayer.

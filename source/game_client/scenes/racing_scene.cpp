@@ -69,7 +69,7 @@ LudumDare56::GameClient::RacingScene::RacingScene(void) :
 	mRacetrack(),
 	mRacecarArray(),
 	mRacecarTachometer(GameState::InvalidRacecar()),
-	mRacecarSpeedometer(GameState::InvalidRacecar()),
+	mSwarmHealthBar(GameState::InvalidRacecar()),
 	mRacecarStandings(GameState::InvalidRacecar()),
 	mSettingsScreen()
 {
@@ -203,7 +203,7 @@ void LudumDare56::GameClient::RacingScene::OnUpdate(const float deltaTime)
 
 	const GameState::RacecarIndex viewedRacecar = mCamera.GetViewedRacecarIndex();
 	mRacecarTachometer.SetRacecarIndex(viewedRacecar);
-	mRacecarSpeedometer.SetRacecarIndex(viewedRacecar);
+	mSwarmHealthBar.SetRacecarIndex(viewedRacecar);
 	mRacecarStandings.SetRacecarIndex(viewedRacecar);
 	Base3dScene::OnUpdate(deltaTime);
 
@@ -282,7 +282,7 @@ void LudumDare56::GameClient::RacingScene::OnOpen(void)
 
 	AddEntity(new MouseHidingEntity());
 	//AddGraphic(mRacecarTachometer);
-	//AddGraphic(mRacecarSpeedometer);
+	AddGraphic(mSwarmHealthBar);
 	//AddEntity(mRacecarStandings);
 
 	switch (sGameMode)

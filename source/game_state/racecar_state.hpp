@@ -40,6 +40,8 @@ namespace LudumDare56::GameState
 		typedef tbCore::TypedInteger<CreatureIndexType> CreatureIndex;
 
 		static constexpr CreatureIndex::Integer kNumberOfCreatures = 200;
+		static constexpr CreatureIndex::Integer kMinimumCreatures = 20;
+
 		constexpr CreatureIndex InvalidCreature(void) { return CreatureIndex::Integer(~0); }
 		constexpr bool IsValidCreature(const CreatureIndex creatureIndex) { return creatureIndex < kNumberOfCreatures; }
 
@@ -92,6 +94,7 @@ namespace LudumDare56::GameState
 
 		void ResetRacecar(const iceMatrix4& vehicleToWorld);
 
+		CreatureIndex GetSwarmHealth(void) const { return mSwarmHealth; }
 		bool IsCreatureAlive(const CreatureIndex& creatureIndex) const { return mCreatures[creatureIndex].mIsAlive; }
 
 		iceMatrix4 GetBodyToWorld(void) const;
