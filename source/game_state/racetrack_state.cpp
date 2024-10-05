@@ -481,20 +481,31 @@ const TrackBundler::Component* GetComponentOn(const TrackBundler::NodeKey& nodeK
 //--------------------------------------------------------------------------------------------------------------------//
 
 void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(const TrackBundler::Node& node,
-	const TrackBundler::Component& componentInformation, const TrackBundler::Legacy::TrackBundle& trackBundle)
+	const TrackBundler::Component& component, const TrackBundler::Legacy::TrackBundle& trackBundle)
 {
 	tbCore::Node* actualNode = theRootObject.FindChildByID(static_cast<tbCore::uuid>(node.mNodeKey), tbCore::Recursive::Yes);
 	tb_error_if(nullptr == actualNode, "Expected the node(%s) to exist in the root object.", node.GetName().c_str());
 	ObjectState* object = dynamic_cast<ObjectState*>(actualNode);
 	tb_error_if(nullptr == object, "Expected the node(%s) to be an ObjectState type!", node.GetName().c_str());
 
-	ComponentStatePtr component = ComponentState::CreateComponent(*object, componentInformation, trackBundle.mImprovedBundle);
-	if (nullptr != component)
+	ComponentStatePtr componentState = ComponentState::CreateComponent(*object, component, trackBundle.mImprovedBundle);
+	if (nullptr != componentState)
 	{
-		object->AddComponent(std::move(component));
+		object->AddComponent(std::move(componentState));
 	}
 
-	if (componentInformation.mDefinitionKey == TrackBundler::ComponentDefinition::kSplinePathKey)
+	if (ComponentDefinition::kSpawnPointKey == component.mDefinitionKey)
+	{
+		// TODO: LudumDare56: PainPoint: 2024-10-05: I was trying to use AsRangedIntegerWithDefault() but it didn't want
+		//   to compile because 'const' if statement... AsRangedInteger works and I think we need some cleanup in the
+		//   DynamicStructure regarding this mess.
+		int gridIndex = component.mProperties["index"].AsRangedInteger<int>();
+		tb_always_log(LogState::Always() << "Setting GridSpot[" << gridIndex << "] to: ( " << node.GetNodeToWorld().GetPosition().x << ", " <<
+			node.GetNodeToWorld().GetPosition().z << " ).");
+
+		theGridSpotsToWorld[gridIndex] = static_cast<icePhysics::Matrix4>(node.GetNodeToWorld());
+	}
+	else if (component.mDefinitionKey == TrackBundler::ComponentDefinition::kSplinePathKey)
 	{
 		if ("racetrack" == node.GetName())
 		{
@@ -509,10 +520,10 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 			const TrackBundler::Component* splineMeshComponent = GetComponentOn(node.mNodeKey, trackBundle.mImprovedBundle,
 				TrackBundler::ComponentDefinition::kSplineMeshKey);
 			tb_error_if(nullptr == splineMeshComponent, "Error: Expected 'racetrack' node to have a Spline Mesh component.");
-			theRacetrackMesh = TrackBundler::CreateMeshFromSplineComponent(componentInformation, *splineMeshComponent, unusedDebug);
+			theRacetrackMesh = TrackBundler::CreateMeshFromSplineComponent(component, *splineMeshComponent, unusedDebug);
 
 			std::vector<tbMath::BezierCurve> curves;
-			TrackBundler::CreateCurveFromSplineComponent(curves, componentInformation, node.GetNodeToWorld());
+			TrackBundler::CreateCurveFromSplineComponent(curves, component, node.GetNodeToWorld());
 			tb_error_if(1 != curves.size(), "Error: Expected 'racetrack' to have a SINGLE spline path.");
 
 			const tbMath::BezierCurve& trackCurve = curves[0];
