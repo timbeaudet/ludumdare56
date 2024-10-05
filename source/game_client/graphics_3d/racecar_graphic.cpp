@@ -20,6 +20,7 @@ LudumDare56::GameClient::RacecarGraphic::RacecarGraphic(void) :
 	mRacecarMeshID(0),
 	mRacecarGraphic(),
 	mWheelGraphics(),
+	mCreatureGraphics(),
 	mLagText("LAG", 15.0f),
 	mCarText("", 20.0f)
 {
@@ -29,6 +30,12 @@ LudumDare56::GameClient::RacecarGraphic::RacecarGraphic(void) :
 	{
 		//wheelGraphic.SetMesh("data/meshes/racecars/wheel_fancy.msh");
 		mRacecarGraphic.AddGraphic(wheelGraphic);
+	}
+
+	for (iceGraphics::Graphic& creatureGraphic : mCreatureGraphics)
+	{
+		creatureGraphic.SetMesh(GameState::RacecarState::GetCarFilepath(1));
+		creatureGraphic.SetMaterial("data/materials/palette256.mat");
 	}
 }
 
@@ -91,6 +98,14 @@ void LudumDare56::GameClient::RacecarGraphic::Update(const float /*deltaTime*/)
 		{
 			mLagText.SetVisible(false);
 		}
+	}
+
+	CreatureIndex creatureIndex = 0;
+	for (iceGraphics::Graphic& creatureGraphic : mCreatureGraphics)
+	{
+		const tbMath::Matrix4 creatureToWorld = static_cast<tbMath::Matrix4>(racecar.GetCreatureToWorld(creatureIndex));
+		creatureGraphic.SetObjectToWorld(Matrix4::Scale(0.125f, 0.125f, 0.125f) * creatureToWorld);
+		++creatureIndex;
 	}
 
 	size_t wheelIndex = 0;

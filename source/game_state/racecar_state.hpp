@@ -36,6 +36,13 @@ namespace LudumDare56::GameState
 	class RacecarState : public TyreBytes::Core::EventBroadcaster
 	{
 	public:
+		enum class CreatureIndexType : tbCore::uint8 { };
+		typedef tbCore::TypedInteger<CreatureIndexType> CreatureIndex;
+
+		static constexpr CreatureIndex::Integer kNumberOfCreatures = 40;
+		constexpr CreatureIndex InvalidCreature(void) { return CreatureIndex::Integer(~0); }
+		constexpr bool IsValidCreature(const CreatureIndex creatureIndex) { return creatureIndex < kNumberOfCreatures; }
+
 		static const RacecarState& Get(const RacecarIndex racecarIndex);
 		static RacecarState& GetMutable(const RacecarIndex racecarIndex);
 
@@ -60,6 +67,7 @@ namespace LudumDare56::GameState
 
 		iceMatrix4 GetBodyToWorld(void) const;
 		iceMatrix4 GetWheelToWorld(const size_t wheelIndex) const;
+		iceMatrix4 GetCreatureToWorld(const CreatureIndex& creatureIndex) const;
 		iceMatrix4 GetVehicleToWorld(void) const;
 		void SetVehicleToWorld(const iceMatrix4& vehicleToWorld);
 
@@ -93,6 +101,28 @@ namespace LudumDare56::GameState
 		void SetRacecarDriver(const DriverIndex driverIndex);
 
 	private:
+		class Creature
+		{
+		public:
+			iceMatrix4 mCreatureToWorld;
+			iceVector3 mVelocity;
+
+			explicit Creature(const iceMatrix4& creatureToWorld = iceMatrix4::Identity()) :
+				mCreatureToWorld(creatureToWorld),
+				mVelocity(iceVector3::Zero())
+			{
+			}
+
+			void Move(const iceVector3& target, const iceVector3& alignment, const iceVector3& cohesion, const iceVector3& separation);
+		};
+
+		void SimulateCreatureSwarm(void);
+		iceVector3 CalculateCohesion(const Creature& creature) const;
+		iceVector3 CalculateSeparation(const Creature& creature) const;
+		iceVector3 CalculateAlignment(const Creature& creature) const;
+
+		std::array<Creature, kNumberOfCreatures> mCreatures;
+
 		PhysicsModels::PhysicsModelInterfacePtr mPhysicsModel;
 		std::unique_ptr<RacecarControllerInterface> mController;
 		icePhysics::World* mPhysicalWorld;

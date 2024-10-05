@@ -30,15 +30,15 @@ namespace LudumDare56
 
 		enum class DriverIndexType : tbCore::uint8 { };
 		typedef tbCore::TypedInteger<DriverIndexType> DriverIndex;
-		constexpr DriverIndex::Integer kNumberOfModerators = 2;
-		constexpr DriverIndex::Integer kNumberOfDrivers = 20 + kNumberOfModerators;
+		constexpr DriverIndex::Integer kNumberOfModerators = 0;
+		constexpr DriverIndex::Integer kNumberOfDrivers = 1 + kNumberOfModerators;
 		constexpr DriverIndex InvalidDriver(void) { return DriverIndex::Integer(~0); }
 		constexpr bool IsValidDriver(const DriverIndex driverIndex) { return driverIndex < kNumberOfDrivers; }
 
 		enum class RacecarIndexType : tbCore::uint8 { };
 		typedef tbCore::TypedInteger<RacecarIndexType> RacecarIndex;
 
-		constexpr RacecarIndex::Integer kNumberOfRacecars = 20;
+		constexpr RacecarIndex::Integer kNumberOfRacecars = 1;
 		constexpr RacecarIndex InvalidRacecar(void) { return RacecarIndex::Integer(~0); }
 		constexpr bool IsValidRacecar(const RacecarIndex racecarIndex) { return racecarIndex < kNumberOfRacecars; }
 

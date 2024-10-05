@@ -54,6 +54,17 @@
 //      Track Bundler might have a helper function to get this into world/physics already, who know about tying events.
 //   3. Any additional fallout from the removal of almost all assets in Trophy Brawlers to create the LD empty project.
 
+// Create a bit wider track with longer sweeping corners as the swarms won't like sharp corners!
+// Place the camera in the center of the whole swarm, or perhaps in between the swarm center and target center?
+//    Ideally the target arrow will go away.
+// Continue tuning and at some point around 8 or 9am hard-stop tuning, wrap up the rest of the 'game' by killing the
+//   creatures that fall off the track/hit obstacles, and add time & scoring.
+//   Some tuning ideas; we might want to slow the acceleration of the "target" as the creature gets closer to it.
+//   Ideally when the target is not moving, niether would the swarm?? Hmm - not really how they work. Good Luck!
+//
+//   By 11am, noon at the latest I want to be FINISHED with the core-game loop and game-play, and begin adding content
+//   and polish for the rest of the weekend.
+
 //--------------------------------------------------------------------------------------------------------------------//
 
 namespace LudumDare56
