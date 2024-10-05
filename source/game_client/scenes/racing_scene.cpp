@@ -242,7 +242,6 @@ void LudumDare56::GameClient::RacingScene::OnUpdate(const float deltaTime)
 void LudumDare56::GameClient::RacingScene::OnPerspectiveRender(void) const
 {
 	Base3dScene::OnPerspectiveRender();
-	mRacetrack.RenderDebug();
 
 #if defined(development_build)
 	static iceGraphics::Visualization aiVisuals;
@@ -250,6 +249,7 @@ void LudumDare56::GameClient::RacingScene::OnPerspectiveRender(void) const
 	if (true == sIsDebuggingPhysics)
 	{	//Physics / GameState debugging
 		GameState::RaceSessionState::RenderDebug();
+		mRacetrack.RenderDebug();
 
 		GameState::ArtificialDriverController::SetDebugVisualizer(&aiVisuals);
 		aiVisuals.Render();

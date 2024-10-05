@@ -184,6 +184,11 @@ LudumDare56::GameState::ComponentStatePtr LudumDare56::GameClient::RacetrackGrap
 	}
 	else if (TrackBundler::ComponentDefinition::kSplineMeshKey == componentInformation.mDefinitionKey)
 	{
+		//if (object.GetName() == "racetrack_collider")
+		if (true == tbCore::StringContains(object.GetName(), "_collider"))
+		{	//Don't do...
+			return nullptr;
+		}
 		//We need to find the SplinePath component on this object.
 
 		const TrackBundler::NodeKey nodeKey = static_cast<TrackBundler::NodeKey>(object.GetID());

@@ -525,6 +525,16 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 	}
 	else if (component.mDefinitionKey == TrackBundler::ComponentDefinition::kSplinePathKey)
 	{
+		if ("racetrack_collider" == node.GetName())
+		{
+			iceGraphics::Visualization unusedDebug;
+
+			const TrackBundler::Component* splineMeshComponent = GetComponentOn(node.mNodeKey, trackBundle.mImprovedBundle,
+				TrackBundler::ComponentDefinition::kSplineMeshKey);
+
+			tb_error_if(nullptr == splineMeshComponent, "Error: Expected 'racetrack_collider' node to have a Spline Mesh component.");
+			theRacetrackMesh = TrackBundler::CreateMeshFromSplineComponent(component, *splineMeshComponent, unusedDebug);
+		}
 		if ("racetrack" == node.GetName())
 		{
 			tb_error_if(false == TheTrackNodes().empty(), "Error: Expected TheTrackNodes container to be empty, is there more than one 'racetrack'?");
@@ -538,7 +548,11 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 			const TrackBundler::Component* splineMeshComponent = GetComponentOn(node.mNodeKey, trackBundle.mImprovedBundle,
 				TrackBundler::ComponentDefinition::kSplineMeshKey);
 			tb_error_if(nullptr == splineMeshComponent, "Error: Expected 'racetrack' node to have a Spline Mesh component.");
-			theRacetrackMesh = TrackBundler::CreateMeshFromSplineComponent(component, *splineMeshComponent, unusedDebug);
+
+			if (iceCore::InvalidMesh() == theRacetrackMesh)
+			{
+				theRacetrackMesh = TrackBundler::CreateMeshFromSplineComponent(component, *splineMeshComponent, unusedDebug);
+			}
 
 			std::vector<tbMath::BezierCurve> curves;
 			TrackBundler::CreateCurveFromSplineComponent(curves, component, node.GetNodeToWorld());

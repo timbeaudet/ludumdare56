@@ -471,8 +471,6 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 	iceVector3 swarmPosition = iceVector3::Zero();
 	mSwarmVelocity = iceVector3::Zero();
 
-	//iceCore::MeshHandle racetrackMesh = RacetrackState::GetCurrentRacetrackMesh();
-
 	//bool first = true;
 	CreatureIndex creatureIndex = 0;
 	mSwarmHealth = 0;
@@ -506,14 +504,14 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 
 				const iceVector3 oldPosition = creature.mCreatureToWorld.GetPosition();
 				iceVector3 position = creature.mCreatureToWorld.GetPosition();
-				position.y = intersectionPoint.y + 0.1f;
+				position.y = intersectionPoint.y + 0.01f;
 				creature.mCreatureToWorld.SetPosition(position);
 
 				creature.mVelocity.y = position.y - oldPosition.y;
 			}
 			else
 			{
-				//creature.mIsAlive = false;
+				creature.mIsAlive = false; //To insta-kill when 'getting an offtrack'
 				creature.mIsOnTrack = false;
 			}
 		}
