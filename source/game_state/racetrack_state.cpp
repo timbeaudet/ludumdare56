@@ -216,6 +216,21 @@ void LudumDare56::GameState::RacetrackState::Destroy(icePhysics::World& physical
 
 void LudumDare56::GameState::RacetrackState::Simulate(void)
 {
+	for (ObjectStatePtr& objectState : theRacetrackObjects)
+	{
+		if (true == objectState->IsActive())
+		{
+			objectState->OnSimulate();
+
+			for (ComponentState& component : objectState->AllComponents())
+			{
+				if (true == component.IsActiveSelf())
+				{
+					component.OnSimulate();
+				}
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -504,6 +519,9 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 			node.GetNodeToWorld().GetPosition().z << " ).");
 
 		theGridSpotsToWorld[gridIndex] = static_cast<icePhysics::Matrix4>(node.GetNodeToWorld());
+	}
+	else if (ComponentDefinition::kZoneForbiddenKey == component.mDefinitionKey)
+	{
 	}
 	else if (component.mDefinitionKey == TrackBundler::ComponentDefinition::kSplinePathKey)
 	{

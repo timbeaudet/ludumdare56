@@ -43,8 +43,35 @@ namespace LudumDare56::GameState
 		constexpr CreatureIndex InvalidCreature(void) { return CreatureIndex::Integer(~0); }
 		constexpr bool IsValidCreature(const CreatureIndex creatureIndex) { return creatureIndex < kNumberOfCreatures; }
 
+		class Creature
+		{
+		public:
+			iceMatrix4 mCreatureToWorld;
+			iceVector3 mPreviousPosition;
+			iceVector3 mVelocity;
+			bool mIsAlive;
+			bool mIsOnTrack;
+			bool mIsRacing;
+
+			explicit Creature(const iceMatrix4& creatureToWorld = iceMatrix4::Identity()) :
+				mCreatureToWorld(creatureToWorld),
+				mPreviousPosition(iceVector3::Zero()),
+				mVelocity(iceVector3::Zero()),
+				mIsAlive(true),
+				mIsOnTrack(true),
+				mIsRacing(true)
+			{
+			}
+
+			void Move(const iceVector3& targetPosition, const iceScalar targetSpeed, const iceVector3& alignment,
+				const iceVector3& cohesion, const iceVector3& separation);
+		};
+
 		static const RacecarState& Get(const RacecarIndex racecarIndex);
 		static RacecarState& GetMutable(const RacecarIndex racecarIndex);
+
+		const Creature& GetCreature(const CreatureIndex creatureIndex) { return mCreatures[creatureIndex]; }
+		Creature& GetMutableCreature(const CreatureIndex creatureIndex) { return mCreatures[creatureIndex]; }
 
 		///
 		/// @note This is purely for some syntactical sugars of using ranged for-loops;
@@ -110,26 +137,6 @@ namespace LudumDare56::GameState
 		void SetRacecarDriver(const DriverIndex driverIndex);
 
 	private:
-		class Creature
-		{
-		public:
-			iceMatrix4 mCreatureToWorld;
-			iceVector3 mVelocity;
-			bool mIsAlive;
-			bool mIsOnTrack;
-
-			explicit Creature(const iceMatrix4& creatureToWorld = iceMatrix4::Identity()) :
-				mCreatureToWorld(creatureToWorld),
-				mVelocity(iceVector3::Zero()),
-				mIsAlive(true),
-				mIsOnTrack(true)
-			{
-			}
-
-			void Move(const iceVector3& targetPosition, const iceScalar targetSpeed, const iceVector3& alignment,
-				const iceVector3& cohesion, const iceVector3& separation);
-		};
-
 		void SimulateCreatureSwarm(void);
 		iceVector3 CalculateCohesion(const Creature& creature, const iceScalar distance) const;
 		iceVector3 CalculateSeparation(const Creature& creature, const iceScalar distance) const;

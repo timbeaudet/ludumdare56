@@ -11,25 +11,13 @@
 //#include "../../game_state/components/mesh_collider_component.hpp"
 //#include "../../game_state/components/rigid_body_component.hpp"
 //#include "../../game_state/components/spawn_point_component.hpp"
-//#include "../../game_state/components/finish_area_component.hpp"
+#include "../../game_state/components/zone_finish_component.hpp"
 //#include "../../game_state/components/boost_pickup_component.hpp"
 
+#include "../../custom_components.hpp"
 #include "../../logging.hpp"
 
 #include <track_bundler/track_bundler.hpp>
-
-namespace ComponentDefinitions
-{
-	typedef TrackBundler::ComponentDefinitionKey ComponentDefinitionKey;
-
-	//const ComponentDefinitionKey kRigidBody = TrackBundler::ComponentDefinition::kRio
-
-	//const ComponentDefinitionKey kStaticPhysicsObject = ComponentDefinitionKey::FromString("762dab40-461e-4923-bce1-93fecfe81954");
-	//const ComponentDefinitionKey kSpawnPointComponent = ComponentDefinitionKey::FromString("bc5fd8fd-332a-4102-af0e-8ab87f4c57c1");
-	//const ComponentDefinitionKey kFinishAreaComponent = ComponentDefinitionKey::FromString("4620568c-583a-4194-aa64-de3ccba8ddac");
-	//const ComponentDefinitionKey kBoostPickupComponent = ComponentDefinitionKey::FromString("1eaf62de-da8a-4b97-b7e5-2dbba5a2a4c4");
-
-};
 
 //--------------------------------------------------------------------------------------------------------------------//
 
@@ -49,9 +37,6 @@ LudumDare56::GameState::ComponentCreator::~ComponentCreator(void)
 LudumDare56::GameState::ComponentStatePtr LudumDare56::GameState::ComponentCreator::OnCreateComponent(
 	ObjectState& object, const TrackBundler::Component& componentInformation)
 {
-	tb_unused(object);
-	tb_unused(componentInformation);
-
 	//const tbCore::DynamicStructure& componentProperties = componentInformation.mProperties;
 
 	//if (TrackBundler::ComponentDefinition::kColliderBoxKey == componentInformation.mDefinitionKey)
@@ -113,10 +98,10 @@ LudumDare56::GameState::ComponentStatePtr LudumDare56::GameState::ComponentCreat
 	//	const GridIndex spawnIndex = componentProperties["index"].AsRangedInteger<GridIndex::Integer>();
 	//	return ComponentStatePtr(new SpawnPointComponent(object, spawnIndex));
 	//}
-	//else if (ComponentDefinitions::kFinishAreaComponent == componentInformation.mDefinitionKey)
-	//{
-	//	return ComponentStatePtr(new FinishAreaComponent(object));
-	//}
+	if (ComponentDefinition::kZoneFinishKey == componentInformation.mDefinitionKey)
+	{
+		return ComponentStatePtr(new ZoneFinishComponent(object, componentInformation));
+	}
 	//else if (ComponentDefinitions::kBoostPickupComponent == componentInformation.mDefinitionKey)
 	//{
 	//	return ComponentStatePtr(new BoostPickupComponent(object));

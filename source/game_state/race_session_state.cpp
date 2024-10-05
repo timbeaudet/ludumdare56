@@ -266,6 +266,7 @@ void LudumDare56::GameState::RaceSessionState::Simulate(void)
 
 	thePhysicalWorld->Simulate(kFixedTime);
 
+	RacetrackState::Simulate();
 	for (RacecarState& racecar : RacecarState::AllMutableRacecars())
 	{
 		if (false == racecar.IsRacecarInUse())

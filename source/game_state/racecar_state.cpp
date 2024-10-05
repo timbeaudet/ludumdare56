@@ -115,9 +115,11 @@ void LudumDare56::GameState::RacecarState::ResetRacecar(const iceMatrix4& vehicl
 
 		creature.mCreatureToWorld = creatureToVehicle * vehicleToWorld;
 		creature.mCreatureToWorld.SetPosition(creature.mCreatureToWorld.GetPosition().x, 0.0f, creature.mCreatureToWorld.GetPosition().z);
+		creature.mPreviousPosition = creature.mCreatureToWorld.GetPosition();
 		creature.mVelocity = iceVector3::Zero();
 		creature.mIsOnTrack = true;
 		creature.mIsAlive = true;
+		creature.mIsRacing = true;
 	}
 
 	mSwarmHealth = kNumberOfCreatures;
@@ -431,7 +433,8 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 	mSwarmHealth = 0;
 	for (Creature& creature : mCreatures)
 	{
-		if (false == creature.mIsAlive)
+		creature.mPreviousPosition = creature.mCreatureToWorld.GetPosition();
+		if (false == creature.mIsAlive || false == creature.mIsRacing)
 		{
 			++creatureIndex;
 			continue;
