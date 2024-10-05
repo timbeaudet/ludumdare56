@@ -24,7 +24,7 @@ LudumDare56::GameClient::RacecarGraphic::RacecarGraphic(void) :
 	mLagText("LAG", 15.0f),
 	mCarText("", 20.0f)
 {
-	mRacecarGraphic.SetMesh(GameState::RacecarState::GetCarFilepath(0));
+	//mRacecarGraphic.SetMesh(GameState::RacecarState::GetCarFilepath(0));
 	mRacecarGraphic.SetMaterial("data/materials/palette256.mat");
 	for (iceGraphics::Graphic& wheelGraphic : mWheelGraphics)
 	{
