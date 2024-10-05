@@ -19,6 +19,10 @@ namespace LudumDare56
 	{
 		extern const ComponentDefinitionKey kTrackInformationKey;
 		extern const ComponentDefinitionKey kSpawnPointKey;
+
+		extern const ComponentDefinitionKey kZoneFinishKey;
+		extern const ComponentDefinitionKey kZoneForbiddenKey;
+
 	};
 
 }; /* namespace LudumDare56 */

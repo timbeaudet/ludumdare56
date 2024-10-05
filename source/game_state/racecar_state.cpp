@@ -192,8 +192,6 @@ void LudumDare56::GameState::RacecarState::SetRacecarDriver(const DriverIndex dr
 
 	if (true == IsValidDriver(mDriverIndex))
 	{
-		RaceSessionState::PlaceCarOnGrid(*this);
-
 		if (false == IsValidDriver(previousDriverIndex))
 		{
 			mPhysicsModel->SetEnabled(true);

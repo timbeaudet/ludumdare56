@@ -14,6 +14,14 @@
 		"grand_stand":{
 			"display_name": "Grand Stand",
 			"id":"f541890d-8f33-4926-bc20-5a4e615e23b7"
+		},
+		"zone_finish":{
+			"display_name": "Zone Finish",
+			"id":"de1db5b6-e001-479c-80e2-8f35b5f635b2"
+		},
+		"zone_forbidden":{
+			"display_name": "Zone Forbidden",
+			"id":"fefa3775-2cbf-441d-b8cb-1e053609c06a"
 		}
 	}
 }
