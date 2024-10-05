@@ -20,10 +20,10 @@ namespace
 {
 	struct CameraModifiers
 	{
-		tbMath::Vector3 offsetFromCar = tbMath::Vector3(0.0f, 8.286f, 5.571f);//CarSpace
+		tbMath::Vector3 offsetFromCar = tbMath::Vector3(0.0f, 8.286f, 9.571f);//CarSpace
 
 		//tbMath::Vector3 offsetFromCar = tbMath::Vector3(0.0f, 1.286f, 3.571f);//CarSpace
-		tbMath::Vector3 lookAtOffset = tbMath::Vector3(0.0f, 0.357f, 0.0f);//WorldSpace
+		tbMath::Vector3 lookAtOffset = tbMath::Vector3(0.0f, -0.357f, 0.0f);//WorldSpace
 		float springEffect = 0.070f;
 		float staticCameraDistance = 20.404f;
 		float staticCameraHeight = 9.242f;
@@ -296,6 +296,7 @@ tbMath::Matrix4 LudumDare56::GameClient::CameraController::GetViewedTargetToWorl
 	}
 
 	return tbMath::Matrix4(GameState::RacecarState::Get(viewedRacecarIndex).GetVehicleToWorld());
+//	return tbMath::Matrix4(GameState::RacecarState::Get(viewedRacecarIndex).GetSwarmToWorld());
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -309,6 +310,7 @@ tbMath::Vector3 LudumDare56::GameClient::CameraController::GetViewedTargetVeloci
 	}
 
 	return GameState::RacecarState::Get(viewedRacecarIndex).GetLinearVelocity();
+//	return GameState::RacecarState::Get(viewedRacecarIndex).GetSwarmVelocity();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

@@ -281,9 +281,9 @@ void LudumDare56::GameClient::RacingScene::OnOpen(void)
 	mCamera.SetToDefaults(tbMath::Vector3::Zero(), tbMath::Vector3(20.0f, 20.0f, 20.0f));
 
 	AddEntity(new MouseHidingEntity());
-	AddGraphic(mRacecarTachometer);
-	AddGraphic(mRacecarSpeedometer);
-	AddEntity(mRacecarStandings);
+	//AddGraphic(mRacecarTachometer);
+	//AddGraphic(mRacecarSpeedometer);
+	//AddEntity(mRacecarStandings);
 
 	switch (sGameMode)
 	{

@@ -60,6 +60,7 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mPhysicsModel(new PhysicsModels::NullPhysicsModel()),
 	mController(new NullRacecarController()),
 	mPhysicalWorld(nullptr),
+	mSwarmToWorld(iceMatrix4::Identity()),
 	mOnTrackCounter(0),
 	mRacecarIndex(InvalidRacecar()),
 	mDriverIndex(InvalidDriver()),
@@ -224,6 +225,20 @@ icePhysics::Matrix4 LudumDare56::GameState::RacecarState::GetCreatureToWorld(con
 
 //--------------------------------------------------------------------------------------------------------------------//
 
+icePhysics::Matrix4 LudumDare56::GameState::RacecarState::GetSwarmToWorld(void) const
+{
+	return mSwarmToWorld;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+icePhysics::Vector3 LudumDare56::GameState::RacecarState::GetSwarmVelocity(void) const
+{
+	return mSwarmVelocity;
+};
+
+//--------------------------------------------------------------------------------------------------------------------//
+
 icePhysics::Matrix4 LudumDare56::GameState::RacecarState::GetVehicleToWorld(void) const
 {
 	return mPhysicsModel->GetVehicleToWorld();
@@ -375,9 +390,18 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 
 	tb_debug_log(LogState::Info() << "Target position: " << targetPosition);
 
+	int creatureCount = 0;
+	iceVector3 swarmPosition = iceVector3::Zero();
+	mSwarmVelocity = iceVector3::Zero();
+
 	bool first = true;
 	for (Creature& creature : mCreatures)
 	{
+		if (false == creature.mIsAlive)
+		{
+			return;
+		}
+
 		const iceVector3 alignment = CalculateAlignment(creature);
 		const iceVector3 cohesion = CalculateCohesion(creature);
 		const iceVector3 separation = CalculateSeparation(creature);
@@ -391,6 +415,34 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 			tb_debug_log(LogState::Info() << "   separation: " << separation);
 
 		}
+
+		swarmPosition += creature.mCreatureToWorld.GetPosition();
+		mSwarmVelocity += creature.mVelocity;
+		++creatureCount;
+	}
+
+	if (creatureCount == 0)
+	{	//Should never happen if we have minimum health be 20 or 40 creatures...
+		mSwarmToWorld = GetVehicleToWorld();
+	}
+	else
+	{
+		swarmPosition /= creatureCount;
+		mSwarmVelocity /= creatureCount;
+
+		mSwarmToWorld.SetPosition(swarmPosition);
+
+		iceScalar swarmSpeed = 0.0;
+		iceVector3 direction = iceVector3::Normalize(mSwarmVelocity, swarmSpeed);
+		if (swarmSpeed < 0.4)
+		{
+			direction = iceVector3::Forward();
+		}
+
+		const iceVector3 right = Vector3::Cross(direction, Vector3::Up());
+		mSwarmToWorld.SetBasis(0, right);
+		mSwarmToWorld.SetBasis(1, Vector3::Up());
+		mSwarmToWorld.SetBasis(2, -direction);
 	}
 }
 
@@ -419,7 +471,6 @@ void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& targ
 
 	mCreatureToWorld.SetPosition(position);
 
-	//TODO: Turn the creature
 	const iceVector3 direction = (speed > 0.4) ? mVelocity.GetNormalized() : iceVector3::Forward();
 	const iceVector3 right = Vector3::Cross(direction, Vector3::Up());
 	mCreatureToWorld.SetBasis(0, right);
@@ -436,8 +487,8 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateCohesion(cons
 
 	for (const Creature& otherCreature : mCreatures)
 	{
-		if (&otherCreature == &creature)
-		{	//Don't look at ourself!
+		if (&otherCreature == &creature || false == otherCreature.mIsAlive)
+		{	//Don't look at ourself or unalived creatures!
 			continue;
 		}
 
@@ -469,8 +520,8 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateSeparation(co
 	iceVector3 separation = iceVector3::Zero();
 	for (const Creature& otherCreature : mCreatures)
 	{
-		if (&otherCreature == &creature)
-		{	//Don't look at ourself!
+		if (&otherCreature == &creature || false == otherCreature.mIsAlive)
+		{	//Don't look at ourself or unalived creatures!
 			continue;
 		}
 
@@ -497,8 +548,8 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateAlignment(con
 
 	for (const Creature& otherCreature : mCreatures)
 	{
-		if (&otherCreature == &creature)
-		{	//Don't look at ourself!
+		if (&otherCreature == &creature || false == otherCreature.mIsAlive)
+		{	//Don't look at ourself or unalived creatures!
 			continue;
 		}
 

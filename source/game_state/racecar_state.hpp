@@ -39,7 +39,7 @@ namespace LudumDare56::GameState
 		enum class CreatureIndexType : tbCore::uint8 { };
 		typedef tbCore::TypedInteger<CreatureIndexType> CreatureIndex;
 
-		static constexpr CreatureIndex::Integer kNumberOfCreatures = 40;
+		static constexpr CreatureIndex::Integer kNumberOfCreatures = 200;
 		constexpr CreatureIndex InvalidCreature(void) { return CreatureIndex::Integer(~0); }
 		constexpr bool IsValidCreature(const CreatureIndex creatureIndex) { return creatureIndex < kNumberOfCreatures; }
 
@@ -65,9 +65,18 @@ namespace LudumDare56::GameState
 
 		void ResetRacecar(const iceMatrix4& vehicleToWorld);
 
+		bool IsCreatureAlive(const CreatureIndex& creatureIndex) const { return mCreatures[creatureIndex].mIsAlive; }
+
 		iceMatrix4 GetBodyToWorld(void) const;
 		iceMatrix4 GetWheelToWorld(const size_t wheelIndex) const;
 		iceMatrix4 GetCreatureToWorld(const CreatureIndex& creatureIndex) const;
+
+		///
+		/// @details Returns roughly the center of the swarm.
+		///
+		iceMatrix4 GetSwarmToWorld(void) const;
+		iceVector3 GetSwarmVelocity(void) const;
+
 		iceMatrix4 GetVehicleToWorld(void) const;
 		void SetVehicleToWorld(const iceMatrix4& vehicleToWorld);
 
@@ -106,10 +115,12 @@ namespace LudumDare56::GameState
 		public:
 			iceMatrix4 mCreatureToWorld;
 			iceVector3 mVelocity;
+			bool mIsAlive;
 
 			explicit Creature(const iceMatrix4& creatureToWorld = iceMatrix4::Identity()) :
 				mCreatureToWorld(creatureToWorld),
-				mVelocity(iceVector3::Zero())
+				mVelocity(iceVector3::Zero()),
+				mIsAlive(true)
 			{
 			}
 
@@ -127,6 +138,8 @@ namespace LudumDare56::GameState
 		std::unique_ptr<RacecarControllerInterface> mController;
 		icePhysics::World* mPhysicalWorld;
 
+		iceMatrix4 mSwarmToWorld;
+		iceVector3 mSwarmVelocity;
 		int mOnTrackCounter;
 
 		RacecarIndex mRacecarIndex;
