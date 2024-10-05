@@ -312,6 +312,8 @@ void LudumDare56::GameClient::RacetrackGraphic::SetVisible(bool visible)
 void LudumDare56::GameClient::RacetrackGraphic::RenderDebug(void) const
 {
 	mDebugVisuals.Render();
+
+	GameState::RacetrackState::RenderDebug();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

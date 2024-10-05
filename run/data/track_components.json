@@ -1,6 +1,11 @@
 {
 	"version":1,
 	"components":{
+		"track_information":{
+			"display_name": "Track Information",
+			"id":"da58ed53-0181-4537-ae54-9bfc30689e22",
+			"width":{ "type":"float", "default":9.0 }
+		},
 		"grand_stand":{
 			"display_name": "Grand Stand",
 			"id":"f541890d-8f33-4926-bc20-5a4e615e23b7"

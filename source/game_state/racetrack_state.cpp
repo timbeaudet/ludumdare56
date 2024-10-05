@@ -13,12 +13,16 @@
 #include "../core/utilities.hpp"
 #include "../core/event_system.hpp"
 #include "../ludumdare56.hpp"
+#include "../custom_components.hpp"
 #include "../logging.hpp"
 
-#include <track_bundler/track_bundler_to_ice_physics.hpp>
-
 #include <turtle_brains/core/tb_types.hpp>
+
+#include <ice/physics/ice_physical_world.hpp>
+
 #include <track_bundler/track_bundler.hpp>
+#include <track_bundler/track_bundler_to_ice_physics.hpp>
+#include <track_bundler/track_bundler_to_ice_graphics.hpp> //required for mesh atm...
 
 #include <array>
 #include <fstream>
@@ -79,6 +83,9 @@ namespace
 	TyreBytes::Core::EventBroadcaster theRacetrackBroadcaster;
 
 	std::vector<LudumDare56::GameState::RacetrackState::TrackNodeEdge> theTrackNodeEdges;
+
+	tbMath::BezierCurve theRacetrackCurve;
+	iceCore::MeshHandle theRacetrackMesh;
 };
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -122,6 +129,11 @@ void LudumDare56::GameState::RacetrackState::InvalidateRacetrack(void)
 	}
 	theRacetrackObjects.clear();
 
+	if (iceCore::InvalidMesh() != theRacetrackMesh)
+	{
+		iceCore::theMeshManager.DestroyMesh(theRacetrackMesh);
+		theRacetrackMesh = iceCore::InvalidMesh();
+	}
 
 	Implementation::TheMutableTrackNodes().clear();
 	theTrackNodeEdges.clear();
@@ -149,8 +161,17 @@ const tbCore::tbString& LudumDare56::GameState::RacetrackState::GetCurrentRacetr
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void LudumDare56::GameState::RacetrackState::Create(icePhysics::World& /*physicalWorld*/)
+const iceCore::MeshHandle& LudumDare56::GameState::RacetrackState::GetCurrentRacetrackMesh(void)
 {
+	return theRacetrackMesh;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void LudumDare56::GameState::RacetrackState::Create(icePhysics::World& physicalWorld)
+{
+	physicalWorld.HackyAPI_SetGlobalMeshCollider(icePhysics::MeshCollider(theRacetrackMesh));
+
 	for (ObjectStatePtr& objectState : theRacetrackObjects)
 	{
 		//objectState->OnCreate(physicalWorld);
@@ -160,8 +181,10 @@ void LudumDare56::GameState::RacetrackState::Create(icePhysics::World& /*physica
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void LudumDare56::GameState::RacetrackState::Destroy(icePhysics::World& /*physicalWorld*/)
+void LudumDare56::GameState::RacetrackState::Destroy(icePhysics::World& physicalWorld)
 {
+	physicalWorld.HackyAPI_SetGlobalMeshCollider(icePhysics::MeshCollider(iceCore::InvalidMesh()));
+
 	for (ObjectStatePtr& objectState : theRacetrackObjects)
 	{
 		for (ComponentState& component : objectState->AllComponents())
@@ -349,6 +372,21 @@ const LudumDare56::GameState::RacetrackState::TrackNodeEdge& LudumDare56::GameSt
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
+
+bool LudumDare56::GameState::RacetrackState::IsOnTrack(const iceVector3& positionInWorld)
+{
+	//float distance = 0.0;
+	//theRacetrackCurve.GetClosestPoint(positionInWorld, distance);
+	//return (distance > 9.5f);
+
+
+//	theRacetrackMesh
+
+	tb_unused(positionInWorld);
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 
@@ -414,6 +452,34 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateTrackNode(
 
 //--------------------------------------------------------------------------------------------------------------------//
 
+//Dumb helper that needs to be in TrackBundler, or something.
+
+const TrackBundler::Component* GetComponentOn(const TrackBundler::NodeKey& nodeKey, const TrackBundler::ImprovedTrackBundle& trackBundle,
+	const TrackBundler::ComponentDefinitionKey& definitionKey)
+{
+	size_t nodeIndex = 0;
+	for (const TrackBundler::Node& node : trackBundle.mNodeHierarchy)
+	{
+		if (nodeKey == node.mNodeKey)
+		{
+			for (const TrackBundler::Component& component : trackBundle.mNodeComponents[nodeIndex])
+			{
+				if (definitionKey == component.mDefinitionKey)
+				{
+					return &component;
+				}
+			}
+
+			return nullptr;
+		}
+		++nodeIndex;
+	}
+
+	return nullptr;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
 void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(const TrackBundler::Node& node,
 	const TrackBundler::Component& componentInformation, const TrackBundler::Legacy::TrackBundle& trackBundle)
 {
@@ -435,12 +501,22 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 			tb_error_if(false == TheTrackNodes().empty(), "Error: Expected TheTrackNodes container to be empty, is there more than one 'racetrack'?");
 			tb_error_if(false == theTrackNodeEdges.empty(), "Error: Expected TrackNodeEdges to be empty, is there more than one 'racetrack'?");
 
+			const TrackBundler::Component* trackInfo = GetComponentOn(node.mNodeKey, trackBundle.mImprovedBundle, ComponentDefinition::kTrackInformationKey);
+			tb_error_if(nullptr == trackInfo, "Error: Expected 'racetrack' node to have a Track Information component.");
+			const tbCore::DynamicStructure& trackProperties = (nullptr == trackInfo) ? tbCore::DynamicStructure::kNullValue : trackInfo->mProperties;
+
+			iceGraphics::Visualization unusedDebug;
+			const TrackBundler::Component* splineMeshComponent = GetComponentOn(node.mNodeKey, trackBundle.mImprovedBundle,
+				TrackBundler::ComponentDefinition::kSplineMeshKey);
+			tb_error_if(nullptr == splineMeshComponent, "Error: Expected 'racetrack' node to have a Spline Mesh component.");
+			theRacetrackMesh = TrackBundler::CreateMeshFromSplineComponent(componentInformation, *splineMeshComponent, unusedDebug);
+
 			std::vector<tbMath::BezierCurve> curves;
 			TrackBundler::CreateCurveFromSplineComponent(curves, componentInformation, node.GetNodeToWorld());
 			tb_error_if(1 != curves.size(), "Error: Expected 'racetrack' to have a SINGLE spline path.");
 
 			const tbMath::BezierCurve& trackCurve = curves[0];
-
+			theRacetrackCurve = trackCurve;
 
 			{	//Build all the TrackNodes / TrackNodeEdges from the TrackCurve.
 				// @note 2023-11-04: Technically TrackBundler should be creating the trackCurve for us. We are assuming CatMullRomBeau
@@ -454,7 +530,7 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 
 				GameState::RacetrackState::TrackNodeEdge nodeEdge;
 				tbMath::Vector3 trackRightHalfWidth;
-				const float halfTrackWidth = 4.75f;
+				const float halfTrackWidth = trackProperties.GetMember("width").AsFloatWithDefault(4.75f);
 
 				for (size_t index = 0; index < centerPoints.size(); ++index)
 				{

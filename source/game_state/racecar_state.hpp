@@ -116,11 +116,13 @@ namespace LudumDare56::GameState
 			iceMatrix4 mCreatureToWorld;
 			iceVector3 mVelocity;
 			bool mIsAlive;
+			bool mIsOnTrack;
 
 			explicit Creature(const iceMatrix4& creatureToWorld = iceMatrix4::Identity()) :
 				mCreatureToWorld(creatureToWorld),
 				mVelocity(iceVector3::Zero()),
-				mIsAlive(true)
+				mIsAlive(true),
+				mIsOnTrack(true)
 			{
 			}
 
@@ -142,6 +144,7 @@ namespace LudumDare56::GameState
 		iceMatrix4 mSwarmToWorld;
 		iceVector3 mSwarmVelocity;
 		int mOnTrackCounter;
+		CreatureIndex mSwarmHealth;
 
 		RacecarIndex mRacecarIndex;
 		DriverIndex mDriverIndex;

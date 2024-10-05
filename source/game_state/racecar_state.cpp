@@ -62,6 +62,7 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mPhysicalWorld(nullptr),
 	mSwarmToWorld(iceMatrix4::Identity()),
 	mOnTrackCounter(0),
+	mSwarmHealth(kNumberOfCreatures),
 	mRacecarIndex(InvalidRacecar()),
 	mDriverIndex(InvalidDriver()),
 	mRacecarMeshID(0),
@@ -87,17 +88,7 @@ void LudumDare56::GameState::RacecarState::Create(icePhysics::World& physicalWor
 
 	RaceSessionState::PlaceCarOnGrid(*this);
 
-	const iceScalar range = 5.0f;
-
-	const iceMatrix4 vehicleToWorld = GetVehicleToWorld();
-	for (Creature& creature : mCreatures)
-	{
-		const iceMatrix4 creatureToVehicle = iceMatrix4::Translation(tbMath::RandomFloat(-range, range),
-			0.0f, tbMath::RandomFloat(-range, range));
-
-		creature.mCreatureToWorld = creatureToVehicle * vehicleToWorld;
-		creature.mCreatureToWorld.SetPosition(creature.mCreatureToWorld.GetPosition().x, 0.0f, creature.mCreatureToWorld.GetPosition().z);
-	}
+	ResetRacecar(GetVehicleToWorld());
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -114,6 +105,22 @@ void LudumDare56::GameState::RacecarState::ResetRacecar(const iceMatrix4& vehicl
 {
 	SetVehicleToWorld(vehicleToWorld);
 	mPhysicsModel->ResetRacecarForces();
+
+	const iceScalar range = 5.0f;
+
+	for (Creature& creature : mCreatures)
+	{
+		const iceMatrix4 creatureToVehicle = iceMatrix4::Translation(tbMath::RandomFloat(-range, range),
+			0.0f, tbMath::RandomFloat(-range, range));
+
+		creature.mCreatureToWorld = creatureToVehicle * vehicleToWorld;
+		creature.mCreatureToWorld.SetPosition(creature.mCreatureToWorld.GetPosition().x, 0.0f, creature.mCreatureToWorld.GetPosition().z);
+		creature.mVelocity = iceVector3::Zero();
+		creature.mIsOnTrack = true;
+		creature.mIsAlive = true;
+	}
+
+	mSwarmHealth = kNumberOfCreatures;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -398,6 +405,16 @@ icePhysics::Scalar kTargetSpeed = 0.5;
 
 void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 {
+#if defined(tb_debug_build)
+	static int skipFrames = 5;
+#else
+	//1 disables, since all indices will be mod == 0. 2 = skip 1 frame, even/odds...
+	static int skipFrames = 1;
+#endif
+	static int dumdumFrameCounter = 0;
+	++dumdumFrameCounter;
+	dumdumFrameCounter = dumdumFrameCounter % skipFrames;
+
 	iceVector3 targetPosition = GetVehicleToWorld().GetPosition();
 	targetPosition.y = 0.0f;
 
@@ -409,12 +426,58 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 	iceVector3 swarmPosition = iceVector3::Zero();
 	mSwarmVelocity = iceVector3::Zero();
 
+	//iceCore::MeshHandle racetrackMesh = RacetrackState::GetCurrentRacetrackMesh();
+
 	//bool first = true;
+	CreatureIndex creatureIndex = 0;
+	mSwarmHealth = 0;
 	for (Creature& creature : mCreatures)
 	{
 		if (false == creature.mIsAlive)
 		{
-			return;
+			++creatureIndex;
+			continue;
+		}
+
+		// TODO: LudumDare56: 2024-10-05: We might want to go implement the Spline Collider to take in a specific collider
+		//   mesh instead of forcing visuals.
+		iceScalar fraction;
+		iceVector3 intersectionPoint;
+		if (creatureIndex % skipFrames == dumdumFrameCounter)
+		{
+			if (true == mPhysicalWorld->HackyAPI_CastRayToGlobalCollider(creature.mCreatureToWorld.GetPosition() +
+				Vector3::Up() * 2.0f, Vector3::Down(), intersectionPoint, fraction) && fraction < 2.1)
+			{
+				creature.mIsOnTrack = true;
+				//creature.mVelocity.y = 0.0;
+
+				const iceVector3 oldPosition = creature.mCreatureToWorld.GetPosition();
+				iceVector3 position = creature.mCreatureToWorld.GetPosition();
+				position.y = intersectionPoint.y + 0.1f;
+				creature.mCreatureToWorld.SetPosition(position);
+
+				creature.mVelocity.y = position.y - oldPosition.y;
+			}
+			else
+			{
+				//creature.mIsAlive = false;
+				creature.mIsOnTrack = false;
+			}
+		}
+
+		if (false == mIsOnTrack)
+		{
+			creature.mVelocity.y += -10.0f * kFixedTime;
+			if (creature.mCreatureToWorld.GetPosition().y < - 5.0f)
+			{
+				creature.mIsAlive = false;
+				++creatureIndex;
+				continue;
+			}
+		}
+		else if (creature.mVelocity.y < 0.0f)
+		{
+			creature.mVelocity.y = 0.0;
 		}
 
 		icePhysics::Scalar visibleDistance = kCohesionDistance;
@@ -444,7 +507,11 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 
 		swarmPosition += creature.mCreatureToWorld.GetPosition();
 		mSwarmVelocity += creature.mVelocity;
+		mSwarmVelocity.y = 0.0f;
+
+		++mSwarmHealth;
 		++creatureCount;
+		++creatureIndex;
 	}
 
 	if (creatureCount == 0)
@@ -499,15 +566,25 @@ void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& targ
 		//icePhysics::Scalar kVelocityDrag = 0.89;
 	}
 
-	mVelocity -= mVelocity * kVelocityDrag * kFixedTime;
-
-	mVelocity += ((cohesion * centerFactor) + (separation * avoidFactor) + (alignment * matchFactor) +
-		directionToTarget * targetFactor) * kFixedTime;
-
-	const iceScalar speed = mVelocity.Magnitude();
-	if (speed > kMaximumVelocity)
+	iceScalar speed = 0.0;
+	if (true == mIsOnTrack)
 	{
-		mVelocity = mVelocity.GetNormalized() * kMaximumVelocity;
+		mVelocity -= mVelocity * kVelocityDrag * kFixedTime;
+
+		// Ignore any Y from swarm behavior.
+		iceVector3 flatVelocity = mVelocity;
+		flatVelocity += ((cohesion * centerFactor) + (separation * avoidFactor) + (alignment * matchFactor) +
+			directionToTarget * targetFactor) * kFixedTime;
+		flatVelocity.y = 0.0;
+
+		speed = flatVelocity.Magnitude();
+		if (speed > kMaximumVelocity)
+		{
+			flatVelocity = flatVelocity.GetNormalized() * kMaximumVelocity;
+		}
+
+		mVelocity.x = flatVelocity.x;
+		mVelocity.z = flatVelocity.z;
 	}
 
 	position += mVelocity * kFixedTime;

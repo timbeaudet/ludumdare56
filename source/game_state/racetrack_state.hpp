@@ -53,6 +53,7 @@ namespace LudumDare56
 			void InvalidateRacetrack(void);
 			bool IsValidRacetrack(void);
 			const String& GetCurrentRacetrack(void);
+			const iceCore::MeshHandle& GetCurrentRacetrackMesh(void);
 
 			void Create(icePhysics::World& physicalWorld);
 			void Destroy(icePhysics::World& physicalWorld);
@@ -96,6 +97,8 @@ namespace LudumDare56
 			const TrackNodeEdge& GetTrackNodeTrailingEdge(const TrackNodeIndex trackNodeIndex);
 
 			inline bool IsValidTrackNode(const TrackNodeIndex trackNodeIndex) { return trackNodeIndex <= GetNumberOfTrackNodes(); }
+
+			bool IsOnTrack(const iceVector3& positionInWorld);
 
 		};	//namespace RacetrackState
 
