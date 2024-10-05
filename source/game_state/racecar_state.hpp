@@ -124,13 +124,14 @@ namespace LudumDare56::GameState
 			{
 			}
 
-			void Move(const iceVector3& target, const iceVector3& alignment, const iceVector3& cohesion, const iceVector3& separation);
+			void Move(const iceVector3& targetPosition, const iceScalar targetSpeed, const iceVector3& alignment,
+				const iceVector3& cohesion, const iceVector3& separation);
 		};
 
 		void SimulateCreatureSwarm(void);
-		iceVector3 CalculateCohesion(const Creature& creature) const;
-		iceVector3 CalculateSeparation(const Creature& creature) const;
-		iceVector3 CalculateAlignment(const Creature& creature) const;
+		iceVector3 CalculateCohesion(const Creature& creature, const iceScalar distance) const;
+		iceVector3 CalculateSeparation(const Creature& creature, const iceScalar distance) const;
+		iceVector3 CalculateAlignment(const Creature& creature, const iceScalar distance) const;
 
 		std::array<Creature, kNumberOfCreatures> mCreatures;
 

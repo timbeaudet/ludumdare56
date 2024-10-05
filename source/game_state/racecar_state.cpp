@@ -380,7 +380,20 @@ icePhysics::Scalar kTargetFactor = 40.0;
 
 icePhysics::Scalar kMaximumVelocity = 80.0;
 icePhysics::Scalar kVelocityDrag = 0.89;
+icePhysics::Scalar kTargetRange = -3.5;
+icePhysics::Scalar kTargetSpeed = 0.5;
 
+//When target is stationary / in range.
+//icePhysics::Scalar kCohesionDistance = 1.0f;   //more like a visible range.
+//icePhysics::Scalar kSeparationDistance = 0.5f; //more like a in my personal space.
+//
+//icePhysics::Scalar kAvoidFactor = 2.0f;    //separation
+//icePhysics::Scalar kMatchingFactor = 1.25f; //alignment
+//icePhysics::Scalar kCenteringFactor = 0.913f; //cohesion
+//icePhysics::Scalar kTargetFactor = 0.25;
+//
+//icePhysics::Scalar kMaximumVelocity = 80.0;
+//icePhysics::Scalar kVelocityDrag = 0.89;
 //};
 
 void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
@@ -388,13 +401,15 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 	iceVector3 targetPosition = GetVehicleToWorld().GetPosition();
 	targetPosition.y = 0.0f;
 
-	tb_debug_log(LogState::Info() << "Target position: " << targetPosition);
+	const iceScalar targetSpeed = GetLinearVelocity().Magnitude();
+
+	//tb_debug_log(LogState::Info() << "Target position: " << targetPosition);
 
 	int creatureCount = 0;
 	iceVector3 swarmPosition = iceVector3::Zero();
 	mSwarmVelocity = iceVector3::Zero();
 
-	bool first = true;
+	//bool first = true;
 	for (Creature& creature : mCreatures)
 	{
 		if (false == creature.mIsAlive)
@@ -402,19 +417,30 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 			return;
 		}
 
-		const iceVector3 alignment = CalculateAlignment(creature);
-		const iceVector3 cohesion = CalculateCohesion(creature);
-		const iceVector3 separation = CalculateSeparation(creature);
-		creature.Move(targetPosition, alignment, cohesion, separation);
+		icePhysics::Scalar visibleDistance = kCohesionDistance;
+		icePhysics::Scalar bubbleDistance = kSeparationDistance;
 
-		if (first)
+		if (creature.mCreatureToWorld.GetPosition().DistanceTo(targetPosition) < kTargetRange &&
+			targetSpeed < kTargetSpeed)
 		{
-			first = false;
-			tb_debug_log(LogState::Info() << "   alignment: " << alignment);
-			tb_debug_log(LogState::Info() << "   cohesion: " << cohesion);
-			tb_debug_log(LogState::Info() << "   separation: " << separation);
-
+			visibleDistance = 1.0;
+			bubbleDistance = 0.5;
 		}
+
+		const iceVector3 alignment = CalculateAlignment(creature, visibleDistance);
+		const iceVector3 cohesion = CalculateCohesion(creature, visibleDistance);
+		const iceVector3 separation = CalculateSeparation(creature, bubbleDistance);
+		const iceVector3 closeSeparation = CalculateSeparation(creature, bubbleDistance / 4.0f);
+
+		creature.Move(targetPosition, targetSpeed, alignment, cohesion, separation);
+
+		//if (first)
+		//{
+		//	first = false;
+		//	tb_debug_log(LogState::Info() << "   alignment: " << alignment);
+		//	tb_debug_log(LogState::Info() << "   cohesion: " << cohesion);
+		//	tb_debug_log(LogState::Info() << "   separation: " << separation);
+		//}
 
 		swarmPosition += creature.mCreatureToWorld.GetPosition();
 		mSwarmVelocity += creature.mVelocity;
@@ -448,18 +474,35 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& target, const iceVector3& alignment,
-	const iceVector3& cohesion, const iceVector3& separation)
+void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& targetPosition, const iceScalar targetSpeed,
+	const iceVector3& alignment, const iceVector3& cohesion, const iceVector3& separation)
 {
 	iceVector3 position = mCreatureToWorld.GetPosition();
 
-	const iceVector3 directionToTarget = (target - position).GetNormalized();
-	//const iceVector3 directionToTarget = (target - position);
+	iceScalar distanceToTarget = 0.0;
+	const iceVector3 directionToTarget = iceVector3::Normalize(targetPosition - position, distanceToTarget);
+	//const iceVector3 directionToTarget = (targetPosition - position);
+
+	icePhysics::Scalar avoidFactor = kAvoidFactor;
+	icePhysics::Scalar centerFactor = kCenteringFactor;
+	icePhysics::Scalar matchFactor = kMatchingFactor;
+	icePhysics::Scalar targetFactor = kTargetFactor;
+
+	if (distanceToTarget < kTargetRange && targetSpeed < kTargetSpeed)
+	{
+		avoidFactor = 2.0f;    //separation
+		matchFactor = 1.25f; //alignment
+		centerFactor = 0.913f; //cohesion
+		targetFactor = 0.25;
+
+		//icePhysics::Scalar kMaximumVelocity = 80.0;
+		//icePhysics::Scalar kVelocityDrag = 0.89;
+	}
 
 	mVelocity -= mVelocity * kVelocityDrag * kFixedTime;
 
-	mVelocity += ((cohesion * kCenteringFactor) + (separation * kAvoidFactor) + (alignment * kMatchingFactor) +
-		directionToTarget * kTargetFactor) * kFixedTime;
+	mVelocity += ((cohesion * centerFactor) + (separation * avoidFactor) + (alignment * matchFactor) +
+		directionToTarget * targetFactor) * kFixedTime;
 
 	const iceScalar speed = mVelocity.Magnitude();
 	if (speed > kMaximumVelocity)
@@ -480,7 +523,7 @@ void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& targ
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateCohesion(const Creature& creature) const
+icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateCohesion(const Creature& creature, const iceScalar visibleDistance) const
 {
 	int count = 0;
 	iceVector3 averagePosition = iceVector3::Zero();
@@ -493,13 +536,9 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateCohesion(cons
 		}
 
 		const iceScalar distance = creature.mCreatureToWorld.GetPosition().DistanceTo(otherCreature.mCreatureToWorld.GetPosition());
-		if (distance < kCohesionDistance)
+		if (distance < visibleDistance)
 		{
 			averagePosition += otherCreature.mCreatureToWorld.GetPosition();
-			if (false == tbMath::IsZero(averagePosition.y))
-			{
-				rand();
-			}
 			++count;
 		}
 	}
@@ -515,7 +554,7 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateCohesion(cons
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateSeparation(const Creature& creature) const
+icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateSeparation(const Creature& creature, const iceScalar separationDistance) const
 {
 	iceVector3 separation = iceVector3::Zero();
 	for (const Creature& otherCreature : mCreatures)
@@ -525,14 +564,14 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateSeparation(co
 			continue;
 		}
 
-		const iceScalar distance = creature.mCreatureToWorld.GetPosition().DistanceTo(otherCreature.mCreatureToWorld.GetPosition());
-		if (distance < kSeparationDistance)
+		iceScalar distance = 0.0;
+		iceVector3 separationDirection = iceVector3::Normalize(creature.mCreatureToWorld.GetPosition() - otherCreature.mCreatureToWorld.GetPosition(), distance);
+		if (distance < separationDistance)
 		{
-			separation += creature.mCreatureToWorld.GetPosition() - otherCreature.mCreatureToWorld.GetPosition();
-			if (false == tbMath::IsZero(separation.y))
-			{
-				rand();
-			}
+			// The source article said this; but we actually need to invert it so that we separate more strongly from
+			//   the creatures that are closer than the creatures that are near the separation 'border'.
+			//	separation += creature.mCreatureToWorld.GetPosition() - otherCreature.mCreatureToWorld.GetPosition();
+			separation += separationDirection * (separationDistance - distance);
 		}
 	}
 
@@ -541,7 +580,7 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateSeparation(co
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateAlignment(const Creature& creature) const
+icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateAlignment(const Creature& creature, const iceScalar visibleDistance) const
 {
 	int count = 0;
 	iceVector3 averageVelocity;
@@ -554,13 +593,8 @@ icePhysics::Vector3 LudumDare56::GameState::RacecarState::CalculateAlignment(con
 		}
 
 		const iceScalar distance = creature.mCreatureToWorld.GetPosition().DistanceTo(otherCreature.mCreatureToWorld.GetPosition());
-		if (distance < kCohesionDistance)	//used as 'visual range' in https://vanhunteradams.com/Pico/Animal_Movement/Boids-algorithm.html
+		if (distance < visibleDistance)	//used as 'visual range' in https://vanhunteradams.com/Pico/Animal_Movement/Boids-algorithm.html
 		{
-			if (false == tbMath::IsZero(averageVelocity.y))
-			{
-				rand();
-			}
-
 			averageVelocity += otherCreature.mVelocity;
 			++count;
 		}

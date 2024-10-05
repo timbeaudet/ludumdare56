@@ -152,7 +152,11 @@ int LudumDare56::GameClient::Main(int argumentCount, const char* argumentValues[
 	}
 	else
 	{
+#if defined(development_build)
+		gameApplication.RunGame(SceneManager::GetScene(SceneId::kRacingScene));
+#else
 		gameApplication.RunGame(SceneManager::GetScene(SceneId::kTitleScene));
+#endif
 	}
 
 	// TODO: LudumDare56: 2023-10-22: The recent iceCore::MeshData vs iceMesh::VisualMeshes seem to be causing an
