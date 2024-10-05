@@ -60,6 +60,7 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mPhysicsModel(new PhysicsModels::NullPhysicsModel()),
 	mController(new NullRacecarController()),
 	mPhysicalWorld(nullptr),
+	mPreviousPosition(iceVector3::Zero()),
 	mSwarmToWorld(iceMatrix4::Identity()),
 	mOnTrackCounter(0),
 	mSwarmHealth(kNumberOfCreatures),
@@ -67,7 +68,9 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mDriverIndex(InvalidDriver()),
 	mRacecarMeshID(0),
 	mIsOnTrack(false),
-	mIsVisible(false)
+	mIsVisible(false),
+	mRacecarFinished(false),
+	mCreatureFinished(false)
 {
 }
 
@@ -122,6 +125,10 @@ void LudumDare56::GameState::RacecarState::ResetRacecar(const iceMatrix4& vehicl
 		creature.mIsRacing = true;
 	}
 
+	mPreviousPosition = vehicleToWorld.GetPosition();
+
+	mRacecarFinished = false;
+	mCreatureFinished = false;
 	mSwarmHealth = kNumberOfCreatures;
 }
 
@@ -225,6 +232,21 @@ icePhysics::Matrix4 LudumDare56::GameState::RacecarState::GetWheelToWorld(const 
 
 //--------------------------------------------------------------------------------------------------------------------//
 
+void LudumDare56::GameState::RacecarState::OnRacecarFinished(void)
+{
+	mRacecarFinished = true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void LudumDare56::GameState::RacecarState::OnCreatureFinished(const CreatureIndex& creatureIndex)
+{
+	mCreatureFinished = true;
+	mCreatures[creatureIndex].mIsRacing = false;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
 icePhysics::Matrix4 LudumDare56::GameState::RacecarState::GetCreatureToWorld(const CreatureIndex& creatureIndex) const
 {
 	return mCreatures[creatureIndex].mCreatureToWorld;
@@ -304,9 +326,20 @@ LudumDare56::GameState::Gear LudumDare56::GameState::RacecarState::GetShifterPos
 
 void LudumDare56::GameState::RacecarState::Simulate(void)
 {
-	mController->UpdateControls();
+	mPreviousPosition = GetVehicleToWorld().GetPosition();
 
-	mPhysicsModel->Simulate(*mController);
+	if (false == mRacecarFinished && false == HasLost())
+	{
+		mController->UpdateControls();
+		mPhysicsModel->Simulate(*mController);
+	}
+	else
+	{
+		BrakeOnlyRacecarController brakesController;
+		mPhysicsModel->Simulate(brakesController);
+
+		mPhysicsModel->SetLinearVelocity(mPhysicsModel->GetLinearVelocity() * 0.5f * kFixedTime);
+	}
 
 	SimulateCreatureSwarm();
 }
@@ -405,6 +438,19 @@ icePhysics::Scalar kTargetSpeed = 0.5;
 
 void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 {
+	//if (true == HasLost())
+	//{
+	//	for (Creature& creature : mCreatures)
+	//	{
+	//		if (true == creature.mIsAlive)
+	//		{
+	//  Ideally we would add drag to any alive creatures, and stop them from moving around. But then I realized
+	//  if they are alive, but under gravity, or on/off track etc... yuck. Also at time of writing we are testing
+	//  all creature dead to lose, so nobody is alive anyway.
+	//		}
+	//	}
+	//}
+
 #if defined(tb_debug_build)
 	static int skipFrames = 5;
 #else

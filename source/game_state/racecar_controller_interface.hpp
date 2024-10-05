@@ -90,6 +90,15 @@ namespace LudumDare56
 			virtual void OnUpdateControls(void) override;
 		};
 
+		class BrakeOnlyRacecarController : public RacecarControllerInterface
+		{
+		public:
+			BrakeOnlyRacecarController(void);
+			virtual ~BrakeOnlyRacecarController(void);
+
+		protected:
+			virtual void OnUpdateControls(void) override;
+		};
 	};
 
 };	//namespace LudumDare56

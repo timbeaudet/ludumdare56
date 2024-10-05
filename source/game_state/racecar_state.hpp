@@ -39,8 +39,8 @@ namespace LudumDare56::GameState
 		enum class CreatureIndexType : tbCore::uint8 { };
 		typedef tbCore::TypedInteger<CreatureIndexType> CreatureIndex;
 
-		static constexpr CreatureIndex::Integer kNumberOfCreatures = 200;
-		static constexpr CreatureIndex::Integer kMinimumCreatures = 20;
+		static constexpr CreatureIndex::Integer kNumberOfCreatures = 100;
+		static constexpr CreatureIndex::Integer kMinimumCreatures = 0;
 
 		constexpr CreatureIndex InvalidCreature(void) { return CreatureIndex::Integer(~0); }
 		constexpr bool IsValidCreature(const CreatureIndex creatureIndex) { return creatureIndex < kNumberOfCreatures; }
@@ -94,8 +94,13 @@ namespace LudumDare56::GameState
 
 		void ResetRacecar(const iceMatrix4& vehicleToWorld);
 
+		bool HasWon(void) const { return mCreatureFinished; }
+		bool HasLost(void) const { return mSwarmHealth <= kMinimumCreatures; }
 		CreatureIndex GetSwarmHealth(void) const { return mSwarmHealth; }
 		bool IsCreatureAlive(const CreatureIndex& creatureIndex) const { return mCreatures[creatureIndex].mIsAlive; }
+
+		void OnRacecarFinished(void);
+		void OnCreatureFinished(const CreatureIndex& creatureIndex);
 
 		iceMatrix4 GetBodyToWorld(void) const;
 		iceMatrix4 GetWheelToWorld(const size_t wheelIndex) const;
@@ -109,6 +114,7 @@ namespace LudumDare56::GameState
 
 		iceMatrix4 GetVehicleToWorld(void) const;
 		void SetVehicleToWorld(const iceMatrix4& vehicleToWorld);
+		iceVector3 GetPreviousPosition(void) const { return mPreviousPosition; }
 
 		iceVector3 GetAngularVelocity(void) const;
 		void SetAngularVelocity(const iceVector3& angularVelocity);
@@ -151,6 +157,7 @@ namespace LudumDare56::GameState
 		std::unique_ptr<RacecarControllerInterface> mController;
 		icePhysics::World* mPhysicalWorld;
 
+		iceVector3 mPreviousPosition;
 		iceMatrix4 mSwarmToWorld;
 		iceVector3 mSwarmVelocity;
 		int mOnTrackCounter;
@@ -163,6 +170,8 @@ namespace LudumDare56::GameState
 	private:
 		bool mIsOnTrack;
 		bool mIsVisible;
+		bool mRacecarFinished;
+		bool mCreatureFinished;
 	};
 
 };	//namespace LudumDare56::GameState

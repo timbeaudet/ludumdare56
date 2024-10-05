@@ -51,32 +51,44 @@ void LudumDare56::GameState::ZoneFinishComponent::OnDestroy(void)
 
 void LudumDare56::GameState::ZoneFinishComponent::OnSimulate(void)
 {
+	icePhysics::Vector3 at;
+	const iceVector3 finishPosition = mObject.GetObjectToWorld().GetPosition();
+	const iceVector3 finishDirection = -mObject.GetObjectToWorld().GetBasis(2).GetNormalized();
+
 	for (RacecarState& racecar : RacecarState::AllMutableRacecars())
 	{
 		for (RacecarState::CreatureIndex creatureIndex = 0; creatureIndex < RacecarState::kNumberOfCreatures; ++creatureIndex)
 		{
-			RacecarState::Creature& creature = racecar.GetMutableCreature(creatureIndex);
+			const RacecarState::Creature& creature = racecar.GetCreature(creatureIndex);
 			if (false == creature.mIsAlive && false == creature.mIsRacing)
 			{
 				continue;
 			}
 
-			const iceVector3 finishPosition = mObject.GetObjectToWorld().GetPosition();
-			const iceVector3 finishDirection = -mObject.GetObjectToWorld().GetBasis(2).GetNormalized();
 			const iceVector3 creatureStartPosition = creature.mPreviousPosition;
 			const iceVector3 creatureFinalPosition = creature.mCreatureToWorld.GetPosition();
-			const iceVector3 creatureDirection = creatureStartPosition.DirectionTo(creatureFinalPosition);
-			icePhysics::BoundingPlane plane(finishPosition, finishDirection, icePhysics::Performant::Normalized);
-			icePhysics::BoundingRay ray(creature.mPreviousPosition, creatureDirection, icePhysics::Performant::Normalized);
 
-			icePhysics::Vector3 at;
 			if (true == icePhysics::LineSegmentToPlaneCollision(creatureStartPosition, creatureFinalPosition,
 				finishPosition, finishDirection, at))
 			{
-				if (at.DistanceTo(finishPosition) < 10.0f && Vector3::Dot(creatureDirection, finishDirection) > 0.0f)
+				const iceVector3 creatureDirection = creatureStartPosition.DirectionTo(creatureFinalPosition);
+				if (at.SquaredDistanceTo(finishPosition) < 10.0f * 10.0f && Vector3::Dot(creatureDirection, finishDirection) > 0.0f)
 				{	//Creature finished!
-					creature.mIsRacing = false;
+					racecar.OnCreatureFinished(creatureIndex);
 				}
+			}
+		}
+
+		const iceVector3 racecarStartPosition = racecar.GetPreviousPosition();
+		const iceVector3 racecarFinalPosition = racecar.GetVehicleToWorld().GetPosition();
+
+		if (true == icePhysics::LineSegmentToPlaneCollision(racecarStartPosition, racecarFinalPosition,
+			finishPosition, finishDirection, at))
+		{
+			const iceVector3 racecarDirection = racecarStartPosition.DirectionTo(racecarFinalPosition);
+			if (at.SquaredDistanceTo(finishPosition) < 10.0f * 10.0f  && Vector3::Dot(racecarDirection, finishDirection) > 0.0f)
+			{
+				racecar.OnRacecarFinished();
 			}
 		}
 	}
