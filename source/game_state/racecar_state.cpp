@@ -380,7 +380,6 @@ tbCore::tbString LudumDare56::GameState::RacecarState::GetCarFilepath(tbCore::ui
 {
 	const tbCore::tbString pathToRacecars = "data/meshes/racecars/";
 	std::vector<String> availableRacecars = {
-		pathToRacecars + "indicator.msh",
 		pathToRacecars + "formula_blue.msh",
 		pathToRacecars + "formula_red.msh",
 	};

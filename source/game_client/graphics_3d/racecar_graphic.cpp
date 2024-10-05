@@ -34,7 +34,9 @@ LudumDare56::GameClient::RacecarGraphic::RacecarGraphic(void) :
 
 	for (iceGraphics::Graphic& creatureGraphic : mCreatureGraphics)
 	{
-		creatureGraphic.SetMesh(GameState::RacecarState::GetCarFilepath(1));
+		creatureGraphic.SetMesh(GameState::RacecarState::GetCarFilepath(
+			tbCore::RangedCast<tbCore::uint8>(rand() % GameState::RacecarState::GetAvailableCars(false, false).size())
+		));
 		creatureGraphic.SetMaterial("data/materials/palette256.mat");
 	}
 }
@@ -104,7 +106,7 @@ void LudumDare56::GameClient::RacecarGraphic::Update(const float /*deltaTime*/)
 	for (iceGraphics::Graphic& creatureGraphic : mCreatureGraphics)
 	{
 		const tbMath::Matrix4 creatureToWorld = static_cast<tbMath::Matrix4>(racecar.GetCreatureToWorld(creatureIndex));
-		creatureGraphic.SetObjectToWorld(Matrix4::Scale(0.125f, 0.125f, 0.125f) * creatureToWorld);
+		creatureGraphic.SetObjectToWorld(creatureToWorld);
 		++creatureIndex;
 	}
 
