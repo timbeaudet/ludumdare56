@@ -511,8 +511,16 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 			}
 			else
 			{
-				creature.mIsAlive = false; //To insta-kill when 'getting an offtrack'
+			//	creature.mIsAlive = false; //To insta-kill when 'getting an offtrack' Don't do up here, we might be flying!
 				creature.mIsOnTrack = false;
+
+				iceVector3 position = creature.mCreatureToWorld.GetPosition();
+
+				iceVector3 at = iceVector3::Zero();
+				if (true == icePhysics::LineSegmentToPlaneCollision(position, position + iceVector3::Down() * 0.005, iceVector3::Zero(), iceVector3::Up(), at))
+				{
+					creature.mIsAlive = false; //To insta-kill when 'getting an offtrack'
+				}
 			}
 		}
 

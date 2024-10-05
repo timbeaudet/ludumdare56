@@ -39,7 +39,7 @@ namespace LudumDare56::GameState
 		enum class CreatureIndexType : tbCore::uint8 { };
 		typedef tbCore::TypedInteger<CreatureIndexType> CreatureIndex;
 
-		static constexpr CreatureIndex::Integer kNumberOfCreatures = 100;
+		static constexpr CreatureIndex::Integer kNumberOfCreatures = 200;
 		static constexpr CreatureIndex::Integer kMinimumCreatures = 0;
 
 		constexpr CreatureIndex InvalidCreature(void) { return CreatureIndex::Integer(~0); }
