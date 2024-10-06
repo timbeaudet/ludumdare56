@@ -390,6 +390,7 @@ std::vector<tbCore::uint8> LudumDare56::GameState::RacecarState::GetAvailableCar
 	std::vector<tbCore::uint8> cars;
 	cars.push_back(0);
 	cars.push_back(1);
+	cars.push_back(2);
 	return cars;
 }
 
@@ -409,6 +410,7 @@ tbCore::tbString LudumDare56::GameState::RacecarState::GetCarFilepath(tbCore::ui
 	std::vector<String> availableRacecars = {
 		pathToRacecars + "formula_blue.msh",
 		pathToRacecars + "formula_red.msh",
+		pathToRacecars + "formula_yellow.msh",
 	};
 
 	if (carID >= availableRacecars.size())
