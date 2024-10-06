@@ -49,6 +49,7 @@ LudumDare56::GameClient::TitleScene::TitleScene(void) :
 	mPracticeButton("Practice", ui::ButtonType::kTitleSecondary),
 	mSettingsButton("Settings", ui::ButtonType::kTitleSecondary),
 	mExitButton("Exit", ui::ButtonType::kTitleExit),
+	mTitleSprite("data/interface/logo_game.png"),
 	mSettingsScreenEntity(),
 	mFadeInTimer(kMaximumFadeInTime),
 	mFadeOutTimer(0),
@@ -77,6 +78,8 @@ LudumDare56::GameClient::TitleScene::TitleScene(void) :
 
 	AddGraphic(mMessageBox);
 	mMessageBox.SetVisible(false);
+
+	AddGraphic(mTitleSprite);
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -167,10 +170,10 @@ void LudumDare56::GameClient::TitleScene::OnUpdate(const float deltaTime)
 		mMessageBox.SetPosition(tbGraphics::ScreenCenter());
 		mMessageBox.SetScale(interfaceScale);
 
-		//mTitleSprite.SetOrigin(tbGraphics::kAnchorTopCenter);
-		//mTitleSprite.SetPosition(UserInterface::GetAnchorPositionOfInterface(tbGraphics::kAnchorTopCenter,
-		//	tbMath::Vector2(0.0f, 50.0f) * interfaceScale));
-		//mTitleSprite.SetScale(0.6f * interfaceScale);
+		mTitleSprite.SetOrigin(tbGraphics::kAnchorCenter);
+		mTitleSprite.SetPosition(UserInterface::GetAnchorPositionOfInterface(tbGraphics::kAnchorCenter,
+			tbMath::Vector2(0.0f, 50.0f) * interfaceScale));
+		mTitleSprite.SetScale(interfaceScale);
 
 		mPracticeButton.SetOrigin(tbGraphics::kAnchorBottomRight);
 		mPracticeButton.SetPosition(UserInterface::GetAnchorPositionOfInterface(tbGraphics::kAnchorBottomRight,

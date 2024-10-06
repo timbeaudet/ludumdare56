@@ -47,6 +47,8 @@ namespace LudumDare56
 			ui::SpriteButtonGraphic mSettingsButton;
 			ui::SpriteButtonGraphic mExitButton;
 
+			tbGraphics::Sprite mTitleSprite;
+
 			SettingsScreenEntity mSettingsScreenEntity;
 
 			tbGame::GameTimer mFadeInTimer;
