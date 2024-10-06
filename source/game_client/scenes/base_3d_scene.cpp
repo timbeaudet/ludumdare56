@@ -212,45 +212,45 @@ void LudumDare56::GameClient::Base3dScene::DisplayDeveloperConsole(void) const
 		}
 		ImGui::End();
 
-		if (true == ImGui::Begin("Property Mess"))
-		{
-			extern icePhysics::Scalar kCohesionDistance;
-			extern icePhysics::Scalar kSeparationDistance;
-			extern icePhysics::Scalar kAvoidFactor;
-			extern icePhysics::Scalar kMatchingFactor;
-			extern icePhysics::Scalar kCenteringFactor;
-			extern icePhysics::Scalar kTargetFactor;
-			extern icePhysics::Scalar kMaximumVelocity;
-			extern icePhysics::Scalar kVelocityDrag;
+		//if (true == ImGui::Begin("Property Mess"))
+		//{
+		//	extern icePhysics::Scalar kCohesionDistance;
+		//	extern icePhysics::Scalar kSeparationDistance;
+		//	extern icePhysics::Scalar kAvoidFactor;
+		//	extern icePhysics::Scalar kMatchingFactor;
+		//	extern icePhysics::Scalar kCenteringFactor;
+		//	extern icePhysics::Scalar kTargetFactor;
+		//	extern icePhysics::Scalar kMaximumVelocity;
+		//	extern icePhysics::Scalar kVelocityDrag;
 
-			float cohesionDistance = static_cast<float>(kCohesionDistance);
-			float separationDistance = static_cast<float>(kSeparationDistance);
-			float avoidFactor = static_cast<float>(kAvoidFactor);
-			float matchingFactor = static_cast<float>(kMatchingFactor);
-			float centeringFactor = static_cast<float>(kCenteringFactor);
-			float targetFactor = static_cast<float>(kTargetFactor);
-			float maximumVelocity = static_cast<float>(kMaximumVelocity);
-			float velocityDrag = static_cast<float>(kVelocityDrag);
+		//	float cohesionDistance = static_cast<float>(kCohesionDistance);
+		//	float separationDistance = static_cast<float>(kSeparationDistance);
+		//	float avoidFactor = static_cast<float>(kAvoidFactor);
+		//	float matchingFactor = static_cast<float>(kMatchingFactor);
+		//	float centeringFactor = static_cast<float>(kCenteringFactor);
+		//	float targetFactor = static_cast<float>(kTargetFactor);
+		//	float maximumVelocity = static_cast<float>(kMaximumVelocity);
+		//	float velocityDrag = static_cast<float>(kVelocityDrag);
 
-			ImGui::SliderFloat("kCohesionDistance", &cohesionDistance, 0.0f, 2.0f);
-			ImGui::SliderFloat("kSeparationDistance", &separationDistance, 0.0f, 2.0f);
-			ImGui::SliderFloat("kAvoidFactor", &avoidFactor, 0.0f, 2.0f);
-			ImGui::SliderFloat("kMatchingFactor", &matchingFactor, 0.0f, 2.0f);
-			ImGui::SliderFloat("kCenteringFactor", &centeringFactor, 0.0f, 2.0f);
-			ImGui::SliderFloat("kTargetFactor", &targetFactor, 0.0f, 2.0f);
-			ImGui::SliderFloat("kMaximumVelocity", &maximumVelocity, 0.0f, 2.0f);
-			ImGui::SliderFloat("kVelocityDrag", &velocityDrag, 0.0f, 1.0f);
+		//	ImGui::SliderFloat("kCohesionDistance", &cohesionDistance, 0.0f, 2.0f);
+		//	ImGui::SliderFloat("kSeparationDistance", &separationDistance, 0.0f, 2.0f);
+		//	ImGui::SliderFloat("kAvoidFactor", &avoidFactor, 0.0f, 2.0f);
+		//	ImGui::SliderFloat("kMatchingFactor", &matchingFactor, 0.0f, 2.0f);
+		//	ImGui::SliderFloat("kCenteringFactor", &centeringFactor, 0.0f, 2.0f);
+		//	ImGui::SliderFloat("kTargetFactor", &targetFactor, 0.0f, 2.0f);
+		//	ImGui::SliderFloat("kMaximumVelocity", &maximumVelocity, 0.0f, 2.0f);
+		//	ImGui::SliderFloat("kVelocityDrag", &velocityDrag, 0.0f, 1.0f);
 
-			kCohesionDistance = cohesionDistance;
-			kSeparationDistance = separationDistance;
-			kAvoidFactor = avoidFactor;
-			kMatchingFactor = matchingFactor;
-			kCenteringFactor = centeringFactor;
-			kTargetFactor = targetFactor;
-			kMaximumVelocity = maximumVelocity;
-			kVelocityDrag = velocityDrag;
-		}
-		ImGui::End();
+		//	kCohesionDistance = cohesionDistance;
+		//	kSeparationDistance = separationDistance;
+		//	kAvoidFactor = avoidFactor;
+		//	kMatchingFactor = matchingFactor;
+		//	kCenteringFactor = centeringFactor;
+		//	kTargetFactor = targetFactor;
+		//	kMaximumVelocity = maximumVelocity;
+		//	kVelocityDrag = velocityDrag;
+		//}
+		//ImGui::End();
 
 		TyreBytes::Core::Development::tbImGui::RenderFrame();
 	}

@@ -90,6 +90,9 @@ namespace LudumDare56
 
 			void SetStartingGrid(const std::array<GridIndex, kNumberOfRacecars>& startingGrid);
 
+			const String& GetCurrentTrackDisplayName(void);
+			void SetCurrentTrackDisplayName(const String& trackDisplayName);
+
 			void SetNextLevel(const String& trackName);
 			void AdvanceToNextLevel(void);
 

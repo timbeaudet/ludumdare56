@@ -116,6 +116,13 @@ void LudumDare56::GameClient::SwarmHealthBar::OnRender(void) const
 		timerText.SetPosition(UserInterface::GetAnchorPositionOfInterface(tbGraphics::kAnchorTopLeft, Vector2(20.0, 20.0f) * interfaceScale));
 		timerText.SetScale(interfaceScale);
 		timerText.Render();
+
+
+		tbxGraphics::ShadowedText trackText(GameState::RaceSessionState::GetCurrentTrackDisplayName(), 50.0f * interfaceScale);
+		trackText.SetOrigin(tbGraphics::kAnchorTopRight);
+		trackText.SetPosition(UserInterface::GetAnchorPositionOfInterface(tbGraphics::kAnchorTopRight, Vector2(-20.0, 20.0f) * interfaceScale));
+		trackText.SetScale(interfaceScale);
+		trackText.Render();
 	}
 }
 

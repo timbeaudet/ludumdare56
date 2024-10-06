@@ -65,6 +65,14 @@
 //   By 11am, noon at the latest I want to be FINISHED with the core-game loop and game-play, and begin adding content
 //   and polish for the rest of the weekend.
 
+// - Levels, Content, Levels, Content, Levels, Content...
+
+//
+//
+// - checkpoints? safety ground? obstacles?!?  (obstacles = harder than desired unless only spheres detection)
+//    how do you suggest we need checkpoints? If you go offtrack the swarm dies... like... immediately!!
+
+
 //--------------------------------------------------------------------------------------------------------------------//
 
 namespace LudumDare56

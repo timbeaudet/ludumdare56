@@ -5,7 +5,8 @@
 			"display_name": "Track Information",
 			"id":"da58ed53-0181-4537-ae54-9bfc30689e22",
 			"width":{ "type":"float", "default":9.0 },
-			"next_track":{ "type":"string", "default":"" }
+			"next_track":{ "type":"string", "default":"do not use" },
+			"track_name":{ "type":"string", "default":"Track XYZ" }
 		},
 		"spawn_point":{
 			"display_name": "Spawn Point",

@@ -32,6 +32,7 @@ namespace
 	tbGame::GameTimer theWorldTimer = 0;
 	bool theTrustedMode = true;
 
+	tbCore::tbString theCurrentTrackDisplayName = "";
 	tbCore::tbString theNextRacetrackName = "";
 
 	class RacetrackLoader : public TrackBundler::BundleProcessorInterface
@@ -418,6 +419,20 @@ void LudumDare56::GameState::RaceSessionState::SetStartingGrid(const std::array<
 	tb_debug_log("");
 
 	theRaceSessionBroadcaster.SendEvent(TyreBytes::Core::Event(Events::RaceSession::StartGridChanged));
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+const tbCore::tbString& LudumDare56::GameState::RaceSessionState::GetCurrentTrackDisplayName(void)
+{
+	return theCurrentTrackDisplayName;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void LudumDare56::GameState::RaceSessionState::SetCurrentTrackDisplayName(const String& trackName)
+{
+	theCurrentTrackDisplayName = trackName;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
