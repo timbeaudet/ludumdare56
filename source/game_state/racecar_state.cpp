@@ -124,7 +124,7 @@ void LudumDare56::GameState::RacecarState::ResetRacecar(const iceMatrix4& vehicl
 		const iceMatrix4 creatureToVehicle = iceMatrix4::Translation(placementSpots[creatureIndex]);
 
 		creature.mCreatureToWorld = creatureToVehicle * vehicleToWorld;
-		creature.mCreatureToWorld.SetPosition(creature.mCreatureToWorld.GetPosition().x, 0.0f, creature.mCreatureToWorld.GetPosition().z);
+		creature.mCreatureToWorld.SetPosition(creature.mCreatureToWorld.GetPosition().x, 0.06f, creature.mCreatureToWorld.GetPosition().z);
 		creature.mPreviousPosition = creature.mCreatureToWorld.GetPosition();
 		creature.mVelocity = iceVector3::Zero();
 		creature.mIsOnTrack = true;
@@ -480,7 +480,8 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 	//}
 
 #if defined(tb_debug_build)
-	static int skipFrames = 5;
+	//static int skipFrames = 5;
+	static int skipFrames = 1;
 #else
 	//1 disables, since all indices will be mod == 0. 2 = skip 1 frame, even/odds...
 	static int skipFrames = 1;
@@ -519,14 +520,27 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 			continue;
 		}
 
+		iceScalar fraction = 0.0;
+		iceVector3 intersectionPoint = iceVector3::Zero();
+
+		if (true == mPhysicalWorld->HackyAPI_CastRayToGlobalCollider(GetVehicleToWorld().GetPosition() +
+			Vector3::Up() * 1.0f, Vector3::Down(), intersectionPoint, fraction) && fraction < 1.1)
+		{
+			iceMatrix4 modifiedVehicleToWorld = GetVehicleToWorld();
+			const iceVector3 oldPosition = GetVehicleToWorld().GetPosition();
+
+			iceVector3 position = oldPosition;
+			position.y = intersectionPoint.y + 0.01f;
+			modifiedVehicleToWorld.SetPosition(position);
+			SetVehicleToWorld(modifiedVehicleToWorld);
+		}
+
 		// TODO: LudumDare56: 2024-10-05: We might want to go implement the Spline Collider to take in a specific collider
 		//   mesh instead of forcing visuals.
-		iceScalar fraction;
-		iceVector3 intersectionPoint;
 		if (creatureIndex % skipFrames == dumdumFrameCounter)
 		{
 			if (true == mPhysicalWorld->HackyAPI_CastRayToGlobalCollider(creature.mCreatureToWorld.GetPosition() +
-				Vector3::Up() * 2.0f, Vector3::Down(), intersectionPoint, fraction) && fraction < 2.1)
+				Vector3::Up() * 2.0f, Vector3::Down(), intersectionPoint, fraction) && fraction < 2.10)
 			{
 				creature.mIsOnTrack = true;
 				//creature.mVelocity.y = 0.0;
@@ -556,7 +570,7 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 		if (false == mIsOnTrack)
 		{
 			creature.mVelocity.y += -10.0f * kFixedTime;
-			if (creature.mCreatureToWorld.GetPosition().y < - 5.0f)
+			if (creature.mCreatureToWorld.GetPosition().y <= -0.01f)
 			{
 				creature.mIsAlive = false;
 				++creatureIndex;
@@ -583,7 +597,7 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 		const iceVector3 separation = CalculateSeparation(creature, bubbleDistance);
 		const iceVector3 closeSeparation = CalculateSeparation(creature, bubbleDistance / 4.0f);
 
-		creature.Move(targetPosition, targetSpeed, alignment, cohesion, separation);
+		creature.Move(targetPosition, targetSpeed, alignment, cohesion, separation, GetVehicleToWorld());
 
 		//if (first)
 		//{
@@ -630,7 +644,7 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 //--------------------------------------------------------------------------------------------------------------------//
 
 void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& targetPosition, const iceScalar targetSpeed,
-	const iceVector3& alignment, const iceVector3& cohesion, const iceVector3& separation)
+	const iceVector3& alignment, const iceVector3& cohesion, const iceVector3& separation, const iceMatrix4& vehicleToWorld)
 {
 	iceVector3 position = mCreatureToWorld.GetPosition();
 
@@ -679,7 +693,7 @@ void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& targ
 
 	mCreatureToWorld.SetPosition(position);
 
-	const iceVector3 direction = (speed > 0.4) ? mVelocity.GetNormalized() : iceVector3::Forward();
+	const iceVector3 direction = (speed > 0.4) ? mVelocity.GetNormalized() : -vehicleToWorld.GetBasis(2);
 	const iceVector3 right = Vector3::Cross(direction, Vector3::Up());
 	mCreatureToWorld.SetBasis(0, right);
 	mCreatureToWorld.SetBasis(1, Vector3::Up());

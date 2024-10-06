@@ -66,7 +66,7 @@ namespace LudumDare56::GameState
 			}
 
 			void Move(const iceVector3& targetPosition, const iceScalar targetSpeed, const iceVector3& alignment,
-				const iceVector3& cohesion, const iceVector3& separation);
+				const iceVector3& cohesion, const iceVector3& separation, const iceMatrix4& vehicleToWorld);
 		};
 
 		static const RacecarState& Get(const RacecarIndex racecarIndex);
