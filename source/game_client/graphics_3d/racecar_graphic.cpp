@@ -25,6 +25,8 @@ LudumDare56::GameClient::RacecarGraphic::RacecarGraphic(void) :
 	mCarText("", 20.0f)
 {
 	//mRacecarGraphic.SetMesh(GameState::RacecarState::GetCarFilepath(0));
+	//mRacecarGraphic.SetMesh("data/meshes/racecars/indicator.msh");
+
 	mRacecarGraphic.SetMaterial("data/materials/palette256.mat");
 	for (iceGraphics::Graphic& wheelGraphic : mWheelGraphics)
 	{
