@@ -168,7 +168,6 @@ void LudumDare56::GameState::PhysicsModels::ExtremelyBasicsPhysicsModel::Simulat
 	}
 
 	const int wheelsOnGround = racecar.CountWheelsOnGround();
-
 	if (wheelsOnGround >= 2 && true == isOnThrottle)
 	{
 		if (mEngineSpeed < kEngineRevLimiter)

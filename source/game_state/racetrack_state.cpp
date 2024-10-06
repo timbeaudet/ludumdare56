@@ -86,6 +86,7 @@ namespace
 
 	tbMath::BezierCurve theRacetrackCurve;
 	iceCore::MeshHandle theRacetrackMesh;
+	std::unique_ptr<icePhysics::RigidBody> theRacetrackBody;
 };
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -170,7 +171,12 @@ const iceCore::MeshHandle& LudumDare56::GameState::RacetrackState::GetCurrentRac
 
 void LudumDare56::GameState::RacetrackState::Create(icePhysics::World& physicalWorld)
 {
-	physicalWorld.HackyAPI_SetGlobalMeshCollider(icePhysics::MeshCollider(theRacetrackMesh));
+	//physicalWorld.HackyAPI_SetGlobalMeshCollider(icePhysics::MeshCollider(theRacetrackMesh));
+
+	if (nullptr != theRacetrackBody)
+	{
+		physicalWorld.AddBody(*theRacetrackBody);
+	}
 
 	for (ObjectStatePtr& objectState : theRacetrackObjects)
 	{
@@ -183,7 +189,13 @@ void LudumDare56::GameState::RacetrackState::Create(icePhysics::World& physicalW
 
 void LudumDare56::GameState::RacetrackState::Destroy(icePhysics::World& physicalWorld)
 {
-	physicalWorld.HackyAPI_SetGlobalMeshCollider(icePhysics::MeshCollider(iceCore::InvalidMesh()));
+	//physicalWorld.HackyAPI_SetGlobalMeshCollider(icePhysics::MeshCollider(iceCore::InvalidMesh()));
+
+	if (nullptr != theRacetrackBody)
+	{
+		physicalWorld.RemoveBody(theRacetrackBody.get());
+		theRacetrackBody = nullptr;
+	}
 
 	for (ObjectStatePtr& objectState : theRacetrackObjects)
 	{
@@ -534,6 +546,10 @@ void LudumDare56::GameState::Implementation::RacetrackLoader::OnCreateComponent(
 
 			tb_error_if(nullptr == splineMeshComponent, "Error: Expected 'racetrack_collider' node to have a Spline Mesh component.");
 			theRacetrackMesh = TrackBundler::CreateMeshFromSplineComponent(component, *splineMeshComponent, unusedDebug);
+
+			theRacetrackBody.reset(new icePhysics::RigidBody(-1.0));
+			theRacetrackBody->AddBoundingVolume(new icePhysics::MeshCollider(theRacetrackMesh));
+
 		}
 		if ("racetrack" == node.GetName())
 		{

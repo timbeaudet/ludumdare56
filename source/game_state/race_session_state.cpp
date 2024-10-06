@@ -153,9 +153,9 @@ void LudumDare56::GameState::RaceSessionState::Create(const bool isTrusted, cons
 	/// 2023-09-21: The above applies to the RaycastVehicle, but when trying to add other physics objects, we still
 	///   needed to add the plane volume to the physical world for the other objects (cones in testing).
 
-	theTemporaryParklotBody.reset(new icePhysics::RigidBody(-1.0f));
-	theTemporaryParklotBody->AddBoundingVolume(new icePhysics::BoundingPlane(icePhysics::Vector3::Zero(), icePhysics::Vector3(0.0f, 1.0f, 0.0f)));
-	thePhysicalWorld->AddBody(*theTemporaryParklotBody);
+	//theTemporaryParklotBody.reset(new icePhysics::RigidBody(-1.0f));
+	//theTemporaryParklotBody->AddBoundingVolume(new icePhysics::BoundingPlane(icePhysics::Vector3::Zero(), icePhysics::Vector3(0.0f, 1.0f, 0.0f)));
+	//thePhysicalWorld->AddBody(*theTemporaryParklotBody);
 
 	/// End Note.
 
