@@ -15,8 +15,9 @@
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-LudumDare56::GameState::ZoneFinishComponent::ZoneFinishComponent(ObjectState& object, const TrackBundler::Component& /*component*/) :
-	ComponentState(object)
+LudumDare56::GameState::ZoneFinishComponent::ZoneFinishComponent(ObjectState& object, const TrackBundler::Component& component) :
+	ComponentState(object),
+	mNextTrackName(component.mProperties["next_track"].AsStringWithDefault(""))
 {
 	//TrackBundler::CreateBoundingVolumesFrom(static_cast<TrackBundler::NodeKey>(object.GetID()),
 
@@ -89,6 +90,7 @@ void LudumDare56::GameState::ZoneFinishComponent::OnSimulate(void)
 			if (at.SquaredDistanceTo(finishPosition) < 10.0f * 10.0f  && Vector3::Dot(racecarDirection, finishDirection) > 0.0f)
 			{
 				racecar.OnRacecarFinished();
+				GameState::RaceSessionState::SetNextLevel(mNextTrackName);
 			}
 		}
 	}

@@ -25,6 +25,9 @@ namespace LudumDare56::GameState
 		virtual void OnDestroy(void) override;
 
 		virtual void OnSimulate(void) override;
+
+	private:
+		String mNextTrackName;
 	};
 
 };	//namespace LudumDare56::GameState

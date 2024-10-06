@@ -18,7 +18,8 @@
 		},
 		"zone_finish":{
 			"display_name": "Zone Finish",
-			"id":"de1db5b6-e001-479c-80e2-8f35b5f635b2"
+			"id":"de1db5b6-e001-479c-80e2-8f35b5f635b2",
+			"next_track":{ "type":"string", "default":"" }
 		},
 		"zone_forbidden":{
 			"display_name": "Zone Forbidden",
