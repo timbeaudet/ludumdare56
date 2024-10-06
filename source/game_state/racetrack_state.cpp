@@ -280,7 +280,7 @@ void LudumDare56::GameState::RacetrackState::RenderDebug(void)
 
 icePhysics::Matrix4 LudumDare56::GameState::RacetrackState::GetGridToWorld(const GridIndex gridIndex)
 {
-	return icePhysics::Matrix4::Translation(0.0f, 2.0f, 0.0f) * theGridSpotsToWorld[gridIndex];
+	return icePhysics::Matrix4::Translation(0.0f, 0.75f, 0.0f) * theGridSpotsToWorld[gridIndex];
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
