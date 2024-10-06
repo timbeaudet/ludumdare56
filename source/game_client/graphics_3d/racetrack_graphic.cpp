@@ -321,7 +321,7 @@ void LudumDare56::GameClient::RacetrackGraphic::RenderDebug(void) const
 {
 	mDebugVisuals.Render();
 
-	GameState::RacetrackState::RenderDebug();
+	//GameState::RacetrackState::RenderDebug();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
