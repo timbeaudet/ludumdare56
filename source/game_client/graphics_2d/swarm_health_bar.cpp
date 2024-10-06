@@ -12,6 +12,8 @@
 
 #include "../../game_state/racecar_state.hpp"
 
+#include <turtle_brains/graphics/tb_text.hpp>
+
 using icePhysics::Scalar;
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -88,14 +90,11 @@ void LudumDare56::GameClient::SwarmHealthBar::OnUpdate(const float deltaTime)
 
 void LudumDare56::GameClient::SwarmHealthBar::OnRender(void) const
 {
-	//const GameState::RacecarState& racecar = GameState::RacecarState::Get(mRacecarIndex);
-
 	mHealthBar.Render();
 
 	//tbMath::Vector3 flatVelocity = tbMath::Vector3(racecar.GetLinearVelocity());
 	//flatVelocity.y = 0.0f;
 
-	//const float interfaceScale = ui::InterfaceScale();
 
 	//const bool isMetric(false);
 	//const Scalar vehicleSpeed = flatVelocity.Magnitude();
@@ -105,12 +104,19 @@ void LudumDare56::GameClient::SwarmHealthBar::OnRender(void) const
 	//const tbMath::Vector2 tachometerPosition(250.0f * interfaceScale, ui::TargetHeight() - 250.0f * interfaceScale);
 	//const tbMath::Vector2 speedOffset(350.0f, 150.0f);
 
-	////tbxGraphics::ShadowedText speedText(tbCore::ToString(convertedSpeed) + " " + speedyUnits, 70.0f);
-	//tbGraphics::Text speedText(tbCore::ToString(convertedSpeed) + " " + speedyUnits, 70.0f * interfaceScale);
-	//speedText.SetOrigin(tbGraphics::kAnchorBottomCenter);
-	//speedText.SetPosition(tachometerPosition + speedOffset * interfaceScale);
-	//speedText.SetScale(interfaceScale);
-	//speedText.Render();
+	if (GameState::InvalidRacecar() != mRacecarIndex)
+	{
+		const float interfaceScale = ui::InterfaceScale();
+
+		const GameState::RacecarState& racecar = GameState::RacecarState::Get(mRacecarIndex);
+
+		tbxGraphics::ShadowedText timerText(tbCore::String::TimeToString(racecar.GetElapsedTime()), 70.0f * interfaceScale);
+		//tbGraphics::Text timerText(tbCore::String::TimeToString(racecar.GetElapsedTime()), 70.0f * interfaceScale);
+		timerText.SetOrigin(tbGraphics::kAnchorTopLeft);
+		timerText.SetPosition(UserInterface::GetAnchorPositionOfInterface(tbGraphics::kAnchorTopLeft, Vector2(20.0, 20.0f) * interfaceScale));
+		timerText.SetScale(interfaceScale);
+		timerText.Render();
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

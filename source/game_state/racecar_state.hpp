@@ -94,6 +94,7 @@ namespace LudumDare56::GameState
 
 		void ResetRacecar(const iceMatrix4& vehicleToWorld);
 
+		const tbGame::GameTimer::Milliseconds& GetElapsedTime(void) const { return mElapsedTime.GetElapsedTime(); }
 		bool HasWon(void) const { return mRacecarFinished; }
 		bool HasLost(void) const { return mSwarmHealth <= kMinimumCreatures; }
 		CreatureIndex GetSwarmHealth(void) const { return mSwarmHealth; }
@@ -157,6 +158,7 @@ namespace LudumDare56::GameState
 		std::unique_ptr<RacecarControllerInterface> mController;
 		icePhysics::World* mPhysicalWorld;
 
+		tbGame::GameTimer mElapsedTime;
 		iceVector3 mPreviousPosition;
 		iceMatrix4 mSwarmToWorld;
 		iceVector3 mSwarmVelocity;
@@ -172,6 +174,7 @@ namespace LudumDare56::GameState
 		bool mIsVisible;
 		bool mRacecarFinished;
 		bool mCreatureFinished;
+		bool mJustResetted;
 	};
 
 };	//namespace LudumDare56::GameState

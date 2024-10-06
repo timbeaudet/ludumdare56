@@ -70,7 +70,8 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mIsOnTrack(false),
 	mIsVisible(false),
 	mRacecarFinished(false),
-	mCreatureFinished(false)
+	mCreatureFinished(false),
+	mJustResetted(false)
 {
 }
 
@@ -136,8 +137,10 @@ void LudumDare56::GameState::RacecarState::ResetRacecar(const iceMatrix4& vehicl
 
 	mPreviousPosition = vehicleToWorld.GetPosition();
 
+	mElapsedTime = 0;
 	mRacecarFinished = false;
 	mCreatureFinished = false;
+	mJustResetted = true;
 	mSwarmHealth = kNumberOfCreatures;
 }
 
@@ -335,28 +338,32 @@ LudumDare56::GameState::Gear LudumDare56::GameState::RacecarState::GetShifterPos
 
 void LudumDare56::GameState::RacecarState::Simulate(void)
 {
+	//if (true == tbApplication::Input::IsKeyDown(tbApplication::tbKeyP))
+	//{
+	//	tb_debug_log("\n\n\n\n\n-------------------\n");
+	//	tb_debug_log("std::vector<> = { " << tbCore::Debug::ContinueEntry());
 
-	if (true == tbApplication::Input::IsKeyDown(tbApplication::tbKeyP))
-	{
-		tb_debug_log("\n\n\n\n\n-------------------\n");
-		tb_debug_log("std::vector<> = { " << tbCore::Debug::ContinueEntry());
+	//	const iceMatrix4 worldToVehicle = GetVehicleToWorld().ComputeInverse();
+	//	for (const Creature& creature : mCreatures)
+	//	{
+	//		const iceVector3 positionWorld = creature.mCreatureToWorld.GetPosition();
+	//		const iceVector3 positionVehicle = worldToVehicle.TransformCoordinate(positionWorld);
+	//		tb_debug_log("iceVector3(" << positionVehicle << "),\n" << tbCore::Debug::ContinueEntry());
+	//	}
 
-		const iceMatrix4 worldToVehicle = GetVehicleToWorld().ComputeInverse();
-		for (const Creature& creature : mCreatures)
-		{
-			const iceVector3 positionWorld = creature.mCreatureToWorld.GetPosition();
-			const iceVector3 positionVehicle = worldToVehicle.TransformCoordinate(positionWorld);
-			tb_debug_log("iceVector3(" << positionVehicle << "),\n" << tbCore::Debug::ContinueEntry());
-		}
-
-		tb_debug_log("}\n\n");
-
-	}
+	//	tb_debug_log("}\n\n");
+	//}
 
 	mPreviousPosition = GetVehicleToWorld().GetPosition();
 
 	if (false == mRacecarFinished && false == HasLost())
 	{
+		if (false == mJustResetted)
+		{
+			mElapsedTime.IncrementStep();
+		}
+		mJustResetted = false;
+
 		mController->UpdateControls();
 		mPhysicsModel->Simulate(*mController);
 	}
