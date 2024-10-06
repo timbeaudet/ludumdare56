@@ -4,7 +4,7 @@
 	"audio_events": [
 		{
 			"name": "music",
-			"source": "silence.wav",
+			"source": "ld56_main_race.ogg",
 			"looping": true,
 			"music":true,
 			"volume": 0.5,
@@ -16,18 +16,24 @@
 			"source":"silence.wav"
 		},
 		{
-			"name":"example_looping_event",
-			"source":"silence.wav",
+			"name":"all_engines",
+			"source":"all_engines.wav",
 			"looping":true
 		},
 		{
-			"name":"example_setting_event",
-			"source":"silence.wav",
+			"name":"start",
+			"source":"start.wav",
 			"volume":1.0,
 			"pitch":1.0
 		},
 		{
-			"name":"example_random_event",
+			"name":"start_countdown",
+			"source":"start_cue.wav",
+			"volume":1.0,
+			"pitch":1.0
+		},
+		{
+			"name":"example_random",
 			"source":"silence.wav",
 			"min_volume":0.8,
 			"max_volume":1.0,
@@ -35,11 +41,15 @@
 			"max_pitch":1.2
 		},
 		{
-			"name":"example_multi_event",
+			"name":"crash",
+			"min_volume":0.8,
+			"max_volume":1.0,
+			"min_pitch":0.8,
+			"max_pitch":1.2,
 			"source": [
-				{ "file":"silence.wav", "volume":0.7 },
-				{ "file":"silence.wav" },
-				{ "file":"silence.wav" }
+				{ "file":"crash_1.wav", "volume":0.7 },
+				{ "file":"crash_2.wav" },
+				{ "file":"crash_3.wav" }
 			]
 		}
 	]
