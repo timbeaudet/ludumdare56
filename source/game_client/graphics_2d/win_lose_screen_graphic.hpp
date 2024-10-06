@@ -40,6 +40,7 @@ namespace LudumDare56::GameClient
 		enum class State { None, Win, Lose };
 
 		tbxGraphics::ShadowedText mYouWinText;
+		tbxGraphics::ShadowedText mWinStatusText;
 		tbxGraphics::ShadowedText mYouLoseText;
 		GameState::RacecarIndex mRacecarIndex;
 

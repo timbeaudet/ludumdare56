@@ -23,6 +23,7 @@ using icePhysics::Scalar;
 LudumDare56::GameClient::WinLoseScreenGraphic::WinLoseScreenGraphic(const GameState::RacecarIndex racecarIndex) :
 	tbGraphics::Graphic(),
 	mYouWinText("You Won!", 120.0f),
+	mWinStatusText("but at what cost?", 60.0),
 	mYouLoseText("You Lost!", 120.0f),
 	mRetryButton("Retry (space)"),
 	mNextButton("Next (enter)"),
@@ -105,8 +106,25 @@ void LudumDare56::GameClient::WinLoseScreenGraphic::OnUpdate(const float deltaTi
 			mNextButton.Update(deltaTime);
 
 			mYouWinText.SetOrigin(tbGraphics::kAnchorBottomCenter);
-			mYouWinText.SetPosition(ui::GetAnchorPositionOfInterface(tbGraphics::kAnchorCenter, Vector2(0.0f, -50.0f) * interfaceScale));
+			mYouWinText.SetPosition(ui::GetAnchorPositionOfInterface(tbGraphics::kAnchorCenter, Vector2(0.0f, -80.0f) * interfaceScale));
 			mYouWinText.SetScale(interfaceScale);
+
+			if (racecar.GetSwarmHealth() == GameState::RacecarState::kNumberOfCreatures)
+			{
+				mWinStatusText.SetText("Flawless Victory! All Ants Survived.");
+				mWinStatusText.SetColor(tbGraphics::ColorPalette::Green);
+			}
+			else
+			{
+				int lost = GameState::RacecarState::kNumberOfCreatures - racecar.GetSwarmHealth();
+				mWinStatusText.SetText("But at what cost? " + tb_string(lost) + " crashed.");
+				mWinStatusText.SetColor(tbGraphics::ColorPalette::Red);
+			}
+
+			mWinStatusText.SetOrigin(tbGraphics::kAnchorTopCenter);
+			//mWinStatusText.SetPosition(ui::GetAnchorPositionOfInterface(tbGraphics::kAnchorCenter, Vector2(0.0f, -30.0f) * interfaceScale));
+			mWinStatusText.SetPosition(ui::GetAnchorPositionOf(mYouWinText, tbGraphics::kAnchorBottomCenter, Vector2(0.0f, -50.0f) * interfaceScale));
+			mWinStatusText.SetScale(interfaceScale);
 
 			if (true == tbApplication::Input::IsKeyPressed(tbApplication::tbKeyEnter) ||
 				true == tbApplication::Input::IsKeyPressed(tbApplication::tbKeyNumpadEnter))
@@ -149,6 +167,7 @@ void LudumDare56::GameClient::WinLoseScreenGraphic::OnRender(void) const
 	{
 	case State::Win: {
 		mYouWinText.Render();
+		mWinStatusText.Render();
 		mNextButton.Render();
 		mRetryButton.Render();
 		break; }
