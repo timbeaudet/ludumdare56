@@ -51,6 +51,8 @@ LudumDare56::GameState::RacecarState& LudumDare56::GameState::RacecarState::GetM
 	return TheRacecarArray()[racecarIndex];
 }
 
+tbAudio::AudioController theStartCueController;
+
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
@@ -60,6 +62,7 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mPhysicsModel(new PhysicsModels::NullPhysicsModel()),
 	mController(new NullRacecarController()),
 	mPhysicalWorld(nullptr),
+	mElapsedTime(tbGame::GameTimer::Zero()),
 	mPreviousPosition(iceVector3::Zero()),
 	mSwarmToWorld(iceMatrix4::Identity()),
 	mOnTrackCounter(0),
@@ -73,6 +76,8 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mCreatureFinished(false),
 	mJustResetted(false)
 {
+	theStartCueController = tbAudio::theAudioManager.PlayEvent("audio_events", "start_countdown");
+	theStartCueController.Stop();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -138,6 +143,15 @@ void LudumDare56::GameState::RacecarState::ResetRacecar(const iceMatrix4& vehicl
 	}
 
 	mPreviousPosition = vehicleToWorld.GetPosition();
+
+	if (RaceSessionState::GetWorldTimer() < 100 && true == theStartCueController.IsComplete())
+	{
+		theStartCueController.Play();
+	}
+	else if (RaceSessionState::GetWorldTimer() > 5000)
+	{
+		tbAudio::theAudioManager.PlayEvent("audio_events", "start");
+	}
 
 	mElapsedTime = 0;
 	mRacecarFinished = false;
