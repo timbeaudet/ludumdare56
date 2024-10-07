@@ -53,6 +53,7 @@ LudumDare56::GameState::RacecarState& LudumDare56::GameState::RacecarState::GetM
 
 // 2024-10-06: Yes I'm aware GameState shouldn't being doing sounds, that should be the GameClient... but its a jam.
 tbAudio::AudioController theStartCueController;
+tbAudio::AudioController theMusicController;
 std::vector<tbAudio::AudioController> theCrashSounds;
 
 std::array<tbAudio::AudioController, 3> theEngineControllers;
@@ -81,8 +82,6 @@ LudumDare56::GameState::RacecarState::RacecarState(void) :
 	mCreatureFinished(false),
 	mJustResetted(false)
 {
-	theStartCueController = tbAudio::theAudioManager.PlayEvent("audio_events", "start_countdown");
-	theStartCueController.Stop();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -109,6 +108,14 @@ void LudumDare56::GameState::RacecarState::Create(icePhysics::World& physicalWor
 		tbAudio::theAudioManager.PlayEvent("audio_events", "engine_2"),
 		tbAudio::theAudioManager.PlayEvent("audio_events", "engine_3")
 	};
+
+	theStartCueController = tbAudio::theAudioManager.PlayEvent("audio_events", "start_countdown");
+	theStartCueController.Stop();
+
+	if (true == theMusicController.IsComplete())
+	{
+		theMusicController = tbAudio::theAudioManager.PlayEvent("audio_events", "music");
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -432,7 +439,7 @@ void LudumDare56::GameState::RacecarState::Simulate(void)
 
 	for (tbAudio::AudioController& controller : theEngineControllers)
 	{
-		controller.SetVolume(percentage);
+		controller.SetVolume(percentage * 0.5f);
 	}
 }
 
