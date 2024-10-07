@@ -109,6 +109,12 @@ void LudumDare56::GameState::RacecarState::Create(icePhysics::World& physicalWor
 		tbAudio::theAudioManager.PlayEvent("audio_events", "engine_3")
 	};
 
+	for (tbAudio::AudioController& controller : theEngineControllers)
+	{
+		controller.SetVolume(0.0f);
+	}
+
+
 	theStartCueController = tbAudio::theAudioManager.PlayEvent("audio_events", "start_countdown");
 	theStartCueController.Stop();
 
