@@ -51,7 +51,9 @@ LudumDare56::GameState::RacecarState& LudumDare56::GameState::RacecarState::GetM
 	return TheRacecarArray()[racecarIndex];
 }
 
+// 2024-10-06: Yes I'm aware GameState shouldn't being doing sounds, that should be the GameClient... but its a jam.
 tbAudio::AudioController theStartCueController;
+std::vector<tbAudio::AudioController> theCrashSounds;
 
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
@@ -392,6 +394,19 @@ void LudumDare56::GameState::RacecarState::Simulate(void)
 	}
 
 	SimulateCreatureSwarm();
+
+	for (size_t index = 0; index < theCrashSounds.size(); /* in loop */)
+	{
+		if (true == theCrashSounds[index].IsComplete())
+		{
+			theCrashSounds[index] = theCrashSounds.back();
+			theCrashSounds.pop_back();
+		}
+		else
+		{
+			++index;
+		}
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -589,7 +604,7 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 				iceVector3 at = iceVector3::Zero();
 				if (true == icePhysics::LineSegmentToPlaneCollision(position, position + iceVector3::Down() * 0.005, iceVector3::Zero(), iceVector3::Up(), at))
 				{
-					creature.mIsAlive = false; //To insta-kill when 'getting an offtrack'
+					creature.Die(); //To insta-kill when 'getting an offtrack'
 				}
 			}
 		}
@@ -599,7 +614,7 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 			creature.mVelocity.y += -10.0f * kFixedTime;
 			if (creature.mCreatureToWorld.GetPosition().y <= -0.01f)
 			{
-				creature.mIsAlive = false;
+				creature.Die();
 				++creatureIndex;
 				continue;
 			}
@@ -725,6 +740,18 @@ void LudumDare56::GameState::RacecarState::Creature::Move(const iceVector3& targ
 	mCreatureToWorld.SetBasis(0, right);
 	mCreatureToWorld.SetBasis(1, Vector3::Up());
 	mCreatureToWorld.SetBasis(2, -direction);
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void LudumDare56::GameState::RacecarState::Creature::Die(void)
+{
+	mIsAlive = false;
+
+	if (theCrashSounds.size() < 5)
+	{
+		theCrashSounds.push_back(tbAudio::theAudioManager.PlayEvent("audio_events", "crash"));
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
