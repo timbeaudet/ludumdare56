@@ -55,6 +55,9 @@ LudumDare56::GameState::RacecarState& LudumDare56::GameState::RacecarState::GetM
 tbAudio::AudioController theStartCueController;
 std::vector<tbAudio::AudioController> theCrashSounds;
 
+std::array<tbAudio::AudioController, 3> theEngineControllers;
+
+
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
@@ -100,6 +103,12 @@ void LudumDare56::GameState::RacecarState::Create(icePhysics::World& physicalWor
 	RaceSessionState::PlaceCarOnGrid(*this);
 
 	ResetRacecar(GetVehicleToWorld());
+
+	theEngineControllers = std::array<tbAudio::AudioController, 3>{
+		tbAudio::theAudioManager.PlayEvent("audio_events", "engine_1"),
+		tbAudio::theAudioManager.PlayEvent("audio_events", "engine_2"),
+		tbAudio::theAudioManager.PlayEvent("audio_events", "engine_3")
+	};
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -108,6 +117,12 @@ void LudumDare56::GameState::RacecarState::Destroy(icePhysics::World& /*physical
 {
 	mPhysicalWorld = nullptr;
 	mPhysicsModel.reset(new PhysicsModels::NullPhysicsModel());
+
+	theStartCueController.Stop();
+	for (tbAudio::AudioController& controller : theEngineControllers)
+	{
+		controller.Stop();
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -504,6 +519,16 @@ icePhysics::Scalar kTargetSpeed = 0.5;
 //icePhysics::Scalar kVelocityDrag = 0.89;
 //};
 
+float calculatePitch(float speed, float maxPitch) {
+	const float minSpeed = 1.0;
+	const float maxSpeed = 35.0;
+	const float minPitch = 0.75;
+
+	// Calculate the slope using the maxPitch value
+	float slope = (maxPitch - minPitch) / (maxSpeed - minSpeed);
+	return slope * (speed - minSpeed) + minPitch;
+}
+
 void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 {
 	//if (true == HasLost())
@@ -544,6 +569,13 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 	//bool first = true;
 	CreatureIndex creatureIndex = 0;
 	mSwarmHealth = 0;
+
+	std::array<std::pair<iceVector3, CreatureIndex>, 3> positionCountArray = {
+		std::pair<iceVector3, CreatureIndex>{ iceVector3::Zero(), 0 },
+		std::pair<iceVector3, CreatureIndex>{ iceVector3::Zero(), 0 },
+		std::pair<iceVector3, CreatureIndex>{ iceVector3::Zero(), 0 },
+	};
+
 	for (Creature& creature : mCreatures)
 	{
 		creature.mPreviousPosition = creature.mCreatureToWorld.GetPosition();
@@ -608,6 +640,14 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 				}
 			}
 		}
+
+		const CreatureIndex engineChannel = creatureIndex % theEngineControllers.size();
+		if (positionCountArray[engineChannel].second < 1)
+		{
+			positionCountArray[engineChannel].first += creature.mVelocity;
+			positionCountArray[engineChannel].second += 1;
+		}
+
 
 		if (false == mIsOnTrack)
 		{
@@ -680,6 +720,44 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 		mSwarmToWorld.SetBasis(0, right);
 		mSwarmToWorld.SetBasis(1, Vector3::Up());
 		mSwarmToWorld.SetBasis(2, -direction);
+
+
+		//Do engine audio
+		size_t engineChannel = 0;
+		for (tbAudio::AudioController& controller : theEngineControllers)
+		{
+			iceVector3& average = positionCountArray[engineChannel].first;
+			const CreatureIndex& count = positionCountArray[engineChannel].second;
+
+			if (0 == count)
+			{
+				if (false == controller.IsComplete())
+				{
+					controller.Stop();
+				}
+			}
+			else
+			{
+				average /= count;
+				average.y = 0.0f;
+				const float speed = static_cast<float>(average.Magnitude());
+
+				tb_debug_log("channel: " << engineChannel << "   speed: " << speed << "  count: " << +count);
+
+
+				//1 = 0.75
+				//35 = 3.75
+
+
+				//Fluffy made that math happen
+				controller.Play();
+				//controller.SetPitch(tbMath::Clamp(0.0882f * speed + 0.6618f, 0.75f, 4.0f));
+				controller.SetPitch(calculatePitch(speed, 1.5));
+			}
+
+			++engineChannel;
+		}
+
 	}
 }
 

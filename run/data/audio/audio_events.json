@@ -21,6 +21,24 @@
 			"looping":true
 		},
 		{
+			"name":"engine_1",
+			"source":"engine_1.wav",
+			"volume":0.5,
+			"looping":true
+		},
+		{
+			"name":"engine_2",
+			"source":"engine_2.wav",
+			"volume":0.6,
+			"looping":true
+		},
+		{
+			"name":"engine_3",
+			"source":"engine_3.wav",
+			"volume":0.55,
+			"looping":true
+		},
+		{
 			"name":"start",
 			"source":"start.wav",
 			"volume":1.0,
