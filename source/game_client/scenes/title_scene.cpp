@@ -253,11 +253,17 @@ void LudumDare56::GameClient::TitleScene::RenderTitleBackdrop(void)
 	// boomCar.SetScale(0.75f);
 	// boomCar.Render();
 
-	tbGraphics::Sprite gameLogo("data/interface/logo_blackbird.png");
-	gameLogo.SetOrigin(tbGraphics::kAnchorTopLeft);
-	gameLogo.SetPosition(Vector2(50.0f, 50.0f));
-	gameLogo.SetScale(0.5f);
-	gameLogo.Render();
+	tbGraphics::Sprite timbeaudetLogo("data/interface/logo_blackbird.png");
+	timbeaudetLogo.SetOrigin(tbGraphics::kAnchorTopLeft);
+	timbeaudetLogo.SetPosition(Vector2(50.0f, 50.0f));
+	timbeaudetLogo.SetScale(0.25f);
+	timbeaudetLogo.Render();
+
+	tbGraphics::Sprite allovLogo("data/interface/logo_allov.png");
+	allovLogo.SetOrigin(tbGraphics::kAnchorTopLeft);
+	allovLogo.SetPosition(Vector2(50.0f + 128.0f + 50.0f, 50.0f));
+	allovLogo.SetScale(0.25f);
+	allovLogo.Render();
 
 	tbGraphics::Sprite studioLogo("data/interface/logo_tyre_bytes.png");
 	studioLogo.SetOrigin(tbGraphics::kAnchorTopRight);
