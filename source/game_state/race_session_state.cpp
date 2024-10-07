@@ -161,6 +161,8 @@ void LudumDare56::GameState::RaceSessionState::Create(const bool isTrusted, cons
 
 	RacetrackState::Create(*thePhysicalWorld);
 
+	theWorldTimer = 0;
+
 	GridIndex gridIndex = 0;
 	RacecarIndex racecarIndex = 0;
 	for (RacecarState& racecar : RacecarState::AllMutableRacecars())

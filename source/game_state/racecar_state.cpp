@@ -167,6 +167,7 @@ void LudumDare56::GameState::RacecarState::ResetRacecar(const iceMatrix4& vehicl
 	}
 	else if (RaceSessionState::GetWorldTimer() > 5000)
 	{
+		tb_debug_log("World Timer: " << RaceSessionState::GetWorldTimer());
 		tbAudio::theAudioManager.PlayEvent("audio_events", "start");
 	}
 
@@ -421,6 +422,17 @@ void LudumDare56::GameState::RacecarState::Simulate(void)
 		{
 			++index;
 		}
+	}
+
+	float percentage = tbMath::Clamp(mElapsedTime.GetPercentageOf(400), 0.0f, 1.0f);
+	if (true == HasWon() || true == HasLost())
+	{
+		percentage = 0.0f;
+	}
+
+	for (tbAudio::AudioController& controller : theEngineControllers)
+	{
+		controller.SetVolume(percentage);
 	}
 }
 
@@ -757,7 +769,6 @@ void LudumDare56::GameState::RacecarState::SimulateCreatureSwarm(void)
 
 			++engineChannel;
 		}
-
 	}
 }
 
